@@ -5,7 +5,7 @@ import {
     Typography
 } from "@mui/material";
 
-import BarcodeScanner from "./BarcodeScanner.jsx";
+import BarcodeScanner from "../BarcodeScanner.jsx";
 
 const BarcodeStep = ({ onScan }) => {
 

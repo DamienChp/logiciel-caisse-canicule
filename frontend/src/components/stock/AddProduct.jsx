@@ -13,9 +13,9 @@ import {
 
 import { useProductStore } from "../../store/product";
 
-import BarcodeStep from "./BarcodeStep";
-import ProductInfoStep from "./ProductInfoStep";
-import ProductSizeStep from "./ProductSizeStep";
+import BarcodeStep from "./step-add-product/BarcodeStep";
+import ProductInfoStep from "./step-add-product/ProductInfoStep";
+import ProductSizeStep from "./step-add-product/ProductSizeStep";
 
 const steps = [
     "Scanner le produit",

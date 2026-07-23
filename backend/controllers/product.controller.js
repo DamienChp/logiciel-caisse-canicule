@@ -33,7 +33,6 @@ export const getProducts = async(req, res) => {
 export const createProduct = async (req, res) => {
 
     try {
-
         const newProduct = new Product(req.body);
 
         const savedProduct = await newProduct.save();
