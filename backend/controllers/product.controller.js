@@ -3,7 +3,11 @@ import mongoose from "mongoose";
 
 export const getProducts = async(req, res) => {
     try {
-        const products = await Product.find({});
+        //const products = await Product.find({});
+        const products = await Product
+            .find({})
+            .populate("brand");
+
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -34,13 +38,22 @@ export const createProduct = async (req, res) => {
 
     try {
         const newProduct = new Product(req.body);
-
         const savedProduct = await newProduct.save();
+
+        const product = await Product
+            .findById(savedProduct._id)
+            .populate("brand");
+
 
         res.status(201).json({
             success: true,
-            data: savedProduct
+            data: product
         });
+
+        // res.status(201).json({
+        //     success: true,
+        //     data: savedProduct
+        // });
 
     } catch (error) {
 
@@ -62,10 +75,22 @@ export const updateProduct = async(req, res) => {
     }
 
     try {
-        const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(
+                id,
+                product,
+                {
+                    new: true,
+                    runValidators: true
+                }
+            ).populate("brand");
+        //const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
+        if (!updatedProduct) {
+            return res.status(404).json({success: false, message: "Product not found"});
+        }
+        
         res.status(200).json({ success: true, data: updatedProduct });
     } catch (error) { 
-        res.status(505).json({ success: false, message: "Server error" });
+        res.status(505).json({ success: false, message: error.message });
     }
 };
 
@@ -77,7 +102,10 @@ export const deleteProduct = async(req, res) => {
     }
 
     try {
-        await Product.findByIdAndDelete(id);
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        if (!deletedProduct) {
+            return res.status(404).json({success: false, message: "Product not found"});
+        }
         res.status(200).json({ success: true, message: "Product deleted" });
     } catch (error) {
         res.status(500).json({ success: false, message: "Servor error" });

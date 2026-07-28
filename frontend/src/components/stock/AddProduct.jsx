@@ -49,6 +49,7 @@ const AddProduct = ({ open, onClose, brand }) => {
         }
     }, [brand]);
 
+    //Permet le changement des champs dans le formulaire 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -61,7 +62,7 @@ const AddProduct = ({ open, onClose, brand }) => {
     const handleBarcodeScan = (barcode) => {
         setProduct((prev) => ({
             ...prev,
-            barcode
+            barcode: barcode
         }));
 
         setActiveStep(1);

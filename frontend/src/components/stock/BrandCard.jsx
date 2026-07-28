@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const BrandCard = ({ brand }) => {
 
     const brandName = brand.name;
-    const brandImage = brand.image || "https://images.squarespace-cdn.com/content/v1/647a0b2ceda9214b0db40b9c/42701ba5-224d-42d7-a815-c423a717f406/CANICULE-PDP-LOGO.png"
+    const brandImage = brand.image || ""
 
     return (
         <Card

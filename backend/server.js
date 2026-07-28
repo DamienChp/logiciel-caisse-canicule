@@ -19,9 +19,30 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/brands", brandRoutes);
 
 
-app.listen(PORT, () => {
-  connectDB(); // connect to the database
-  console.log(`server started on http://localhost:${PORT}`);
+// app.listen(PORT, () => {
+//   connectDB(); // connect to the database
+//   console.log(`server started on http://localhost:${PORT}`);
+// });
+
+const startServer = async () => {
+    try {
+        await connectDB();
+
+        app.listen(PORT, () => {
+            console.log(`Server started on http://localhost:${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Database connection failed:", error);
+        process.exit(1);
+    }
+};
+
+startServer();
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        message: err.message
+    });
 });
-
-

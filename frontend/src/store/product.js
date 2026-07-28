@@ -5,13 +5,8 @@ export const useProductStore = create((set) => ({
     setProducts: (products) => set({ products }),
     createProduct: async (newProduct) => {
         if (!newProduct.name ||
-            !newProduct.brand ||
-            !newProduct.category ||
-            !newProduct.gender ||
-            !newProduct.size ||
             !newProduct.priceHT ||
-            !newProduct.priceTTC ||
-            !newProduct.barcode) {
+            !newProduct.priceTTC ) {
                 return { success: false, message: 'All fields are required' };
             }
 
@@ -30,6 +25,47 @@ export const useProductStore = create((set) => ({
 
             return { success: true, message: 'Product created successfully' };
     },
+
+    importStock: async(file) => {
+        if (!file) {
+            return {
+                success: false,
+                message: "Aucun fichier envoyé"
+            }
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/products/import",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await res.json();
+        
+        if (!res.ok) {
+            return {
+                success: false,
+                message: data.message || "Erreur lors de l'import"
+            };
+        }
+
+        const productsRes = await fetch("/api/products");
+
+        const productsData = await productsRes.json();
+
+        set({ products: productsData.data});
+
+        return {
+            success: true,
+            message: data.message,
+            data
+        };
+    },
+
     getAllProducts: async () => {
         const res = await fetch('/api/products');
         const data = await res.json();
