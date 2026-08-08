@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 const BarcodeScanner = ({ onScan }) => {
+
+    const lastScan = useRef(null);
 
     useEffect(() => {
 
@@ -19,18 +21,23 @@ const BarcodeScanner = ({ onScan }) => {
 
         const success = (decodedText) => {
 
-            console.log("Code-barres détecté :", decodedText);
+            // Évite les doubles scans immédiats
+            if (lastScan.current === decodedText) {
+                return;
+            }
+
+            lastScan.current = decodedText;
+
+            console.log("Code détecté :", decodedText);
 
             onScan(decodedText);
 
-            scanner.clear();
+            setTimeout(() => {
+                lastScan.current = null;
+            }, 1500);
         };
 
-        const error = (errorMessage) => {
-            // Les erreurs de scan sont normales tant qu'aucun code n'est détecté
-            // console.log('Error :', errorMessage)
-            
-        };
+        const error = () => {};
 
         scanner.render(success, error);
 

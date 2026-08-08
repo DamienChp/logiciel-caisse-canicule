@@ -14,7 +14,7 @@ import {
     BarChart
 } from '@mui/icons-material'
 
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import React from 'react'
 
@@ -30,8 +30,19 @@ const Sidebar = () => {
         }}
     >
         <List>
+            
+            {/* VENTE */}
+
             <ListItem disablePadding>
-                <ListItemButton component={Link} to="/">
+                <ListItemButton 
+                    component={NavLink} 
+                    to="/"
+                    sx={{
+                        '&.active': {
+                            backgroundColor: '#F7ECCB',
+                        },
+                    }}
+                >
                     <ListItemIcon sx={{ color: "#02595A"}}>
                         <PointOfSale />
                     </ListItemIcon>
@@ -43,21 +54,43 @@ const Sidebar = () => {
                     />                
                 </ListItemButton>
             </ListItem>
+
+            {/* STOCK */}
+
             <ListItem disablePadding>
-                <ListItemButton component={Link} to="/stock">
+                <ListItemButton 
+                    component={NavLink} 
+                    to="/stock"
+                    sx={{
+                        '&.active': {
+                            backgroundColor: '#F7ECCB',
+                        },
+                    }}
+                >                    
                     <ListItemIcon sx={{ color: "#02595A"}}>
                         <Inventory />
                     </ListItemIcon>
                     <ListItemText 
-                        primary="Stocke" 
+                        primary="Stock" 
                         primaryTypographyProps={{
                             color: "#02595A",
                         }}
                     />
                 </ListItemButton>
           </ListItem>
+
+        {/* Client */}
+
           <ListItem disablePadding>
-                <ListItemButton component={Link} to="/customers">
+                <ListItemButton 
+                    component={NavLink} 
+                    to="/customers"
+                    sx={{
+                        '&.active': {
+                            backgroundColor: '#F7ECCB',
+                        },
+                    }}
+                >                    
                     <ListItemIcon sx={{ color: "#02595A"}}>
                         <Group />
                     </ListItemIcon>
@@ -69,8 +102,19 @@ const Sidebar = () => {
                     />
                 </ListItemButton>
           </ListItem>
+
+        {/* Tableau de bord */}
+
           <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton 
+                    component={NavLink} 
+                    to="/statistic"
+                    sx={{
+                        '&.active': {
+                            backgroundColor: '#F7ECCB',
+                        },
+                    }}
+                >                    
                     <ListItemIcon sx={{ color: "#02595A"}}>
                         <BarChart />
                     </ListItemIcon>

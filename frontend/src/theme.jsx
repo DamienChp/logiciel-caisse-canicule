@@ -12,13 +12,13 @@ export const theme = createTheme({
             main: "#E7FBF7",
         }
 
-    },
+    }
 
-    components: {
-        MuiButton: {
-            defaultProps: {
-                color: "secondary",
-            },
-        },
-    },
+    // components: {
+    //     MuiButton: {
+    //         defaultProps: {
+    //             color: "secondary",
+    //         },
+    //     },
+    // },
 })

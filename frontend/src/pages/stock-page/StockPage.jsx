@@ -9,7 +9,6 @@ import {
 import { useBrandStore } from "../../store/brand"
 
 import BrandCard from "../../components/stock/BrandCard"
-import AddBrand from "../../components/stock/AddBrand"
 import ImportStock from "../../components/stock/import-stock/ImportStock"
 
 const StockPage = ()=>{  

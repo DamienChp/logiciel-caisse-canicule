@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
     Dialog,
@@ -11,9 +11,10 @@ import {
 
 import { useBrandStore } from '../../store/brand'
 
-const AddBrand = ({open, onClose}) => {
+const EditBrand = ({open, onClose, brandToEdit}) => {
+    
     const { 
-        createBrand, 
+        updateBrand,
         getAllBrands
     } = useBrandStore();
 
@@ -22,26 +23,41 @@ const AddBrand = ({open, onClose}) => {
         image: ""
     });
 
+    // Si on ouvre le dialog pour modifier une marque 
+    useEffect(() => { 
+        if (open && brandToEdit) { 
+           setBrand({
+                name: brandToEdit.name || "",
+                image: brandToEdit.image || ""
+            });
+        } 
+    }, [open]);
+
     const handleChange = (e)=>{
 
         setBrand({
             ...brand,
-            [e.target.name]:e.target.value
-        })
-
+            [e.target.name]: e.target.value
+        });
     };
 
     const handleSubmit = async()=>{
 
-        await createBrand(brand)
+        const result = await updateBrand(
+            brandToEdit._id, 
+            {
+                name: brand.name,
+                image: brand.image
+            }
+        );
 
-        setBrand({
-            name:"",
-            image:""
-        })
+        if (!result.success) {
+            console.error(result.message);
+            return;
+        }
 
-        getAllBrands()
-        onClose()
+        await getAllBrands();
+        onClose();
     };
 
     return (
@@ -52,7 +68,7 @@ const AddBrand = ({open, onClose}) => {
         >
 
             <DialogTitle>
-                Ajouter une marque
+                Modifier une marque
             </DialogTitle>
 
             <DialogContent>
@@ -90,4 +106,4 @@ const AddBrand = ({open, onClose}) => {
     )
 };
 
-export default AddBrand;
+export default EditBrand;

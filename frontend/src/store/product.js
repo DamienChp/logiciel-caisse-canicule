@@ -67,9 +67,29 @@ export const useProductStore = create((set) => ({
     },
 
     getAllProducts: async () => {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        set({ products: data.data });
+        try {
 
+            const res = await fetch('/api/products');
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(
+                    data.message || "Erreur lors de la récupération des produits"
+                );
+            }
+
+            set({
+                products: data.data
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Erreur récupération produits :",
+                error
+            );
+
+        }
     },
 }));

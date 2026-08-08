@@ -23,7 +23,7 @@ import {
 
 
 import { useCustomerStore } from '../../store/customer'
-
+import CustomTable from '../CustomTable.jsx'
 
 
 const CustomerTable = ({searchText}) => {
@@ -40,9 +40,7 @@ const CustomerTable = ({searchText}) => {
             id
         )
 
-    }
-
-
+    };
 
     const columns=[
 
@@ -50,10 +48,7 @@ const CustomerTable = ({searchText}) => {
             field:"fullName",
             headerName:"Nom Prénom",
             flex:1,
-            valueGetter:(value,row)=>
-                `${row.first_name} ${row.last_name}`
         },
-
 
         {
             field:"email",
@@ -61,20 +56,17 @@ const CustomerTable = ({searchText}) => {
             flex:1
         },
 
-
         {
             field:"phone_number",
             headerName:"Téléphone",
             flex:1
         },
 
-
         {
             field:"points",
             headerName:"Points",
             flex:1
         },
-
 
         {
             field:"actions",
@@ -110,82 +102,105 @@ const CustomerTable = ({searchText}) => {
     ]
 
 
+    const rows = customers.map((customer)=>(
+        {
+            id: customer._id,
+            fullName:`${customer.first_name} ${customer.last_name}`,
+            email: customer.email,
+            phone_number: customer.phone_number,
+            points: customer.points
+        }
 
 
-    const rows = useMemo(()=>{
+    ));
 
-        const search = searchText.toLowerCase()
+    // const rows = useMemo(()=>{
 
-        return customers
+    //     const search = searchText.toLowerCase()
 
-        .filter(c=>{
+    //     return customers
 
-            const name =
-            `${c.first_name} ${c.last_name}`
-            .toLowerCase()
+    //     .filter(c=>{
 
-
-            return (
-
-                name.includes(search)
-                ||
-                c.email?.toLowerCase()
-                .includes(search)
-
-                ||
-                c.phone_number?.includes(search)
-
-            )
-
-        })
+    //         const name =
+    //         `${c.first_name} ${c.last_name}`
+    //         .toLowerCase()
 
 
-        .map(c=>({
+    //         return (
 
-            id:c._id,
-            first_name:c.first_name,
-            last_name:c.last_name,
-            email:c.email,
-            phone_number:c.phone_number,
-            points:c.points
+    //             name.includes(search)
+    //             ||
+    //             c.email?.toLowerCase()
+    //             .includes(search)
 
-        }))
+    //             ||
+    //             c.phone_number?.includes(search)
 
+    //         )
 
-    },[
-        customers,
-        searchText
-    ])
+    //     })
 
 
+    //     .map(c=>({
+
+    //         id:c._id,
+    //         first_name:c.first_name,
+    //         last_name:c.last_name,
+    //         email:c.email,
+    //         phone_number:c.phone_number,
+    //         points:c.points
+
+    //     }))
+
+
+    // },[
+    //     customers,
+    //     searchText
+    // ])
 
 
     return (
 
-        <Paper
-            sx={{
-                height:600
-            }}
-        >
+        <CustomTable
+            rows={rows}
+            columns={columns}
+            searchText={searchText}
+            searchFields={[
+                "fullName",
+                "email",
+                "phone_number"
+            ]}
+        />
 
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSizeOptions={[5,10,15]}
-                initialState={{
-                    pagination:{
-                        paginationModel:{
-                            page:0,
-                            pageSize:15
-                        }
-                    }
-                }}
-            />
+    );
+
+    // return (
+
+    //     <Paper
+    //         sx={{
+    //             height:600
+    //         }}
+    //     >
+
+    //         <DataGrid
+    //             rows={rows}
+    //             columns={columns}
+    //             pageSizeOptions={[5,10,15]}
+    //             initialState={{
+    //                 pagination:{
+    //                     paginationModel:{
+    //                         page:0,
+    //                         pageSize:15
+    //                     }
+    //                 }
+    //             }}
+    //         />
 
 
-        </Paper>
+    //     </Paper>
 
-    )
+    // )
 
 }
 

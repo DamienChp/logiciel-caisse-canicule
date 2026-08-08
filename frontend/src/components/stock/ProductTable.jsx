@@ -10,111 +10,119 @@ import {
     TableRow
 } from "@mui/material";
 
+import { useProductStore } from "../../store/product";
+import CustomTable from "../CustomTable";
 
-const ProductTable = ({ products }) => {
-    console.log('products', products)
+const ProductTable = ({ searchText, brand }) => {
+
+    const { products } = useProductStore();
+    
+    const brandProducts = products.filter(
+        (product) =>
+            product.brand?._id === brand
+    );
+
+    const columns = [
+
+        {
+            field: "name",
+            headerName: "Produit",
+            flex: 1
+        },
+
+
+        {
+            field: "articleCode",
+            headerName: "Code article",
+            flex: 1
+        },
+
+
+        {
+            field: "color",
+            headerName: "Couleur",
+            flex: 1
+        },
+
+        {
+            field: "size",
+            headerName: "Taille",
+            flex: 0.7
+        },
+
+        {
+            field: "stock",
+            headerName: "Stock",
+            flex: 0.7
+        },
+
+        {
+            field: "barcode",
+            headerName: "barcode",
+            flex: 0.7
+        },
+
+
+        {
+            field: "priceHT",
+            headerName: "Prix HT",
+            flex: 1,
+
+            valueFormatter: (value) =>
+                `${value} €`
+        },
+
+
+        {
+            field: "priceTTC",
+            headerName: "Prix TTC",
+            flex: 1,
+
+            valueFormatter: (value) =>
+                `${value} €`
+        },
+
+        {
+            field: "purchasePrice",
+            headerName: "Prix d'achat",
+            flex: 1,
+
+            valueFormatter: (value) =>
+                `${value} €`
+        }
+
+    ];
+
+    const rows = brandProducts.map(
+        (product) => ({
+            id: product._id,
+            name: product.name,
+            articleCode: product.articleCode,
+            barcode: product.barcode,
+            color: product.color,
+            size: product.size,
+            stock: product.stock,
+            priceHT: product.priceHT,
+            priceTTC: product.priceTTC,
+            purchasePrice: product.purchasePrice
+        })
+    );
+
+
+
 
     return (
 
-        <TableContainer
-            component={Paper}
-        >
-
-            <Table>
-
-                <TableHead>
-
-                    <TableRow>
-
-                        <TableCell>
-                            Produit
-                        </TableCell>
-
-                        <TableCell>
-                            Catégorie
-                        </TableCell>
-
-                        <TableCell>
-                            Genre
-                        </TableCell>
-
-                        <TableCell>
-                            Prix HT
-                        </TableCell>
-
-                        <TableCell>
-                            Prix TTC
-                        </TableCell>
-
-                        <TableCell>
-                            Stock
-                        </TableCell>
-
-                        <TableCell>
-                            Code-barres
-                        </TableCell>
-
-                    </TableRow>
-
-                </TableHead>
-
-
-                <TableBody>
-
-                    {products.map((product) => (
-
-                        <TableRow
-                            key={product._id}
-                            hover
-                        >
-
-                            <TableCell>
-                                {product.name}
-                            </TableCell>
-
-                            <TableCell>
-                                {product.category}
-                            </TableCell>
-
-                            <TableCell>
-                                {product.gender}
-                            </TableCell>
-
-                            <TableCell>
-                                {product.priceHT} €
-                            </TableCell>
-
-                            <TableCell>
-                                {product.priceTTC} €
-                            </TableCell>
-
-                            <TableCell>
-
-                                {product.size?.map((item) => (
-
-                                    <div
-                                        key={item._id}
-                                    >
-                                        {item.size} : {item.stock}
-                                    </div>
-
-                                ))}
-
-                            </TableCell>
-
-                            <TableCell>
-                                {product.barcode}
-                            </TableCell>
-
-                        </TableRow>
-
-                    ))}
-
-                </TableBody>
-
-            </Table>
-
-        </TableContainer>
+       <CustomTable
+            rows={rows}
+            columns={columns}
+            searchText={searchText}
+            searchFields={[
+                "name",
+                "articleCode",
+                "color"
+            ]}
+        />
 
     );
 };
