@@ -24,6 +24,13 @@ const saleProductSchema = new mongoose.Schema(
         size: {
             type: String,
             default: null
+        },
+
+        discount: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100
         }
     },
     {
@@ -48,6 +55,13 @@ const saleSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0
+        },
+
+        cartDiscount: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100
         },
 
         paymentMethod: {

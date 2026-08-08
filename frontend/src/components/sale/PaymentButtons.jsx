@@ -22,12 +22,16 @@ const PaymentButtons = () => {
         (state) => state.client
     );
 
+    const cartDiscount = useCartStore(
+        (state) => state.cartDiscount
+    );
+
     const getTotal = useCartStore(
         (state) => state.getTotal
     );
 
-    const clearSale = useCartStore(
-        (state) => state.clearSale
+    const clearCart = useCartStore(
+        (state) => state.clearCart
     );
 
     const createSale = useSaleStore(
@@ -54,11 +58,17 @@ const PaymentButtons = () => {
                 product: product._id,
                 size: product.size || null,
                 quantity: product.quantity,
-                priceTTC: product.priceTTC
+                priceTTC: product.priceTTC,
+                discount: product.discount || 0
             })),
 
+            // Remise globale
+            cartDiscount: cartDiscount || 0,
+
+            // Total final
             total: getTotal(),
 
+            // Moyen de paiement
             paymentMethod
         };
 
@@ -69,7 +79,7 @@ const PaymentButtons = () => {
         // On vide le panier uniquement
         // si la vente a bien été enregistrée
         if (result.success) {
-            clearSale();
+            clearCart();
         }
     };
 

@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect } from 'react'
 
-import { 
-    Box, 
-    Grid, 
-    Paper, 
-    Typography, 
-    Button 
+import {
+    Box,
+    Paper,
+    Typography,
+    TextField
 } from '@mui/material'
 
 import BarcodeScanner from "../../components/stock/BarcodeScanner.jsx"
@@ -18,28 +17,37 @@ import { useCartStore } from '../../store/cart.js';
 
 const SalePage = () => {
 
-    const { products, getAllProducts } = useProductStore();
+    const {
+        products,
+        getAllProducts
+    } = useProductStore();
 
     const {
         client,
         cart,
         setClient,
-        addProduct
+        addProduct,
+        cartDiscount,
+        setCartDiscount,
+        getSubtotal,
+        getProductsTotal,
+        getTotal
     } = useCartStore();
 
     useEffect(() => {
         getAllProducts();
     }, [getAllProducts]);
 
-    const total = cart.reduce(
-        (sum, product) => sum + product.priceTTC * product.quantity,
-        0
-    );
+    const subtotal = getSubtotal();
+    const productsTotal = getProductsTotal();
+    const total = getTotal();
 
     const handleScan = useCallback(async (barcode) => {
 
         const product = products.find(
-            (p) => String(p.barcode).trim() === String(barcode).trim()
+            (p) =>
+                String(p.barcode).trim() ===
+                String(barcode).trim()
         );
 
         if (!product) {
@@ -52,188 +60,232 @@ const SalePage = () => {
     }, [products, addProduct]);
 
 
-return (
+    return (
 
-  <Box
-      sx={{
-        flex: 8,
-        p: 2,
-        height: "80dvh",
-        // height: "100%",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        gap: 2
-      }}
-  >
+        <Box
+            sx={{
+                flex: 8,
+                p: 2,
+                height: "80dvh",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2
+            }}
+        >
 
-      {/* HEADER CLIENT + TOTAL */}
+            {/* HEADER CLIENT + TOTAL */}
 
-      <Paper
-          elevation={2}
-          sx={{
-              p: 2,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderRadius: 2
-          }}
+            <Paper
+                elevation={2}
+                sx={{
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderRadius: 2
+                }}
+            >
 
-      >
+                <ClientSelector
+                    client={client}
+                    setClient={setClient}
+                />
 
-          <ClientSelector
-              client={client}
-              setClient={setClient}
-          />
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 3
+                    }}
+                >
 
-          <Box
-              sx={{
-                  textAlign:"right"
-              }}
-          >
+                    {/* REMISE PANIER */}
 
-              <Typography
-                  variant="body2"
-                  color="text.secondary"
-              >
-                  Total vente
-              </Typography>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1
+                        }}
+                    >
 
-              <Typography
-                  variant="h4"
-                  fontWeight="bold"
-              >
+                        <Typography>
+                            Remise panier
+                        </Typography>
 
-                  {/* {total.toFixed(2)} € */}
-                  {total.toFixed(2)} €
+                        <TextField
+                            type="number"
+                            size="small"
+                            value={cartDiscount}
+                            onChange={(e) =>
+                                setCartDiscount(e.target.value)
+                            }
+                            inputProps={{
+                                min: 0,
+                                max: 100
+                            }}
+                            sx={{
+                                width: 100
+                            }}
+                            InputProps={{
+                                endAdornment: "%"
+                            }}
+                        />
 
-              </Typography>
+                    </Box>
 
-          </Box>
 
-      </Paper>
+                    {/* TOTAL */}
 
-      {/* ZONE CENTRALE */}
+                    <Box
+                        sx={{
+                            textAlign: "right"
+                        }}
+                    >
 
-      <Box
-          sx={{
-              flex: 1,
-              minHeight: 0,
-              display: "flex",
-              gap: 2
-          }}
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                        >
+                            Total vente
+                        </Typography>
 
-      >
+                        {cartDiscount > 0 && (
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                    textDecoration: "line-through"
+                                }}
+                            >
+                                {productsTotal.toFixed(2)} €
+                            </Typography>
+                        )}
 
-          {/* CAMERA */}
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                        >
+                            {total.toFixed(2)} €
+                        </Typography>
 
-          <Paper
-              // elevation={2}
-              sx={{
-                  flex:1,
-                  p:2,
-                  display:"flex",
-                  flexDirection:"column",
-                  borderRadius:2,
-                  overflow:"hidden"
-              }}
+                    </Box>
 
-          >
+                </Box>
 
-              <Typography
-                  variant="h6"
-                  mb={2}
-              >
-                  Scanner
-              </Typography>
+            </Paper>
 
-              <Box
-                  sx={{
-                      flex:1,
-                      minHeight: 0
-                      // display:"flex",
-                      // justifyContent:"center",
-                      //  alignItems:"center",
-                      // height: "100%"
-                  }}
-              >
 
-                  <BarcodeScanner
-                      onScan={handleScan}
-                  />
+            {/* ZONE CENTRALE */}
 
-              </Box>
-
-          </Paper>
-
-          {/* TABLEAU */}
-
-          <Paper
-              // elevation={2}
-              sx={{
-                  flex:1,
-                  p:2,
-                  display:"flex",
-                  flexDirection:"column",
-                  borderRadius:2,
-                  overflow:"hidden"
-              }}
-
-          >
-
-              <Typography
-                  variant="h6"
-                  mb={2}
-              >
-                  Produits
-              </Typography>
-
-              <Box
+            <Box
                 sx={{
                     flex: 1,
-                    minHeight: 10,
-                    overflow: "hidden"
-                    // width: "100%"
+                    minHeight: 0,
+                    display: "flex",
+                    gap: 2
                 }}
-              >
+            >
 
-                  <SaleProductTable
-                      products={cart}
-                  />
+                {/* CAMERA */}
 
-              </Box>
+                <Paper
+                    sx={{
+                        flex: 1,
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        borderRadius: 2,
+                        overflow: "hidden"
+                    }}
+                >
 
-          </Paper>
+                    <Typography
+                        variant="h6"
+                        mb={2}
+                    >
+                        Scanner
+                    </Typography>
 
-      </Box>
+                    <Box
+                        sx={{
+                            flex: 1,
+                            minHeight: 0
+                        }}
+                    >
 
-      {/* FOOTER PAIEMENT */}
+                        <BarcodeScanner
+                            onScan={handleScan}
+                        />
 
-      <Paper
-          elevation={2}
-          sx={{
-              p:2,
-              borderRadius:2
-          }}
+                    </Box>
 
-      >
-
-          <Typography
-              variant="h6"
-              mb={2}
-          >
-              Encaissement
-          </Typography>
-
-          <PaymentButtons
-          />
+                </Paper>
 
 
-      </Paper>
+                {/* TABLEAU */}
 
-  </Box>
+                <Paper
+                    sx={{
+                        flex: 1,
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        borderRadius: 2,
+                        overflow: "hidden"
+                    }}
+                >
 
-  )
+                    <Typography
+                        variant="h6"
+                        mb={2}
+                    >
+                        Produits
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            flex: 1,
+                            minHeight: 10,
+                            overflow: "hidden"
+                        }}
+                    >
+
+                        <SaleProductTable
+                            products={cart}
+                        />
+
+                    </Box>
+
+                </Paper>
+
+            </Box>
+
+
+            {/* FOOTER PAIEMENT */}
+
+            <Paper
+                elevation={2}
+                sx={{
+                    p: 2,
+                    borderRadius: 2
+                }}
+            >
+
+                <Typography
+                    variant="h6"
+                    mb={2}
+                >
+                    Encaissement
+                </Typography>
+
+                <PaymentButtons />
+
+            </Paper>
+
+        </Box>
+    )
 }
 
 export default SalePage

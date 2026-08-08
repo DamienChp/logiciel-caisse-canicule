@@ -34,7 +34,7 @@ const CustomTable = ({rows, columns, searchText = "", searchFields = []}) => {
 
         <Paper
             sx={{
-                height:"80dvh",
+                height:"90dvh",
                 width:"100%"
             }}
         >

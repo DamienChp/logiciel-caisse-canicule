@@ -8,6 +8,7 @@ export const createSale = async (req, res) => {
             customer,
             products,
             total,
+            cartDiscount,
             paymentMethod
         } = req.body;
 
@@ -35,6 +36,19 @@ export const createSale = async (req, res) => {
             });
         }
 
+
+        // Vérification de la remise panier
+        if (
+            typeof cartDiscount !== "number" ||
+            cartDiscount < 0 ||
+            cartDiscount > 100
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "La remise panier est invalide"
+            });
+        }
+
         // Si un client est associé à la vente,
         // on vérifie qu'il existe.
         let customerData = null;
@@ -51,17 +65,23 @@ export const createSale = async (req, res) => {
         }
 
         // Création de la vente
+        const roundedTotal = Math.round(total * 100) / 100;
+
         const sale = await Sale.create({
             customer: customer || null,
             products,
-            total,
+            total: roundedTotal,
+            cartDiscount,
             paymentMethod
         });
 
         // Si un client est enregistré,
         // on ajoute le montant de la vente à son cumul.
         if (customerData) {
-            customerData.totalSpent += total;
+            customerData.totalSpent = 
+                Math.round(
+                    (customerData.totalSpent + roundedTotal) * 100
+                ) / 100;
 
             await customerData.save();
         }
