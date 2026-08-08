@@ -10,11 +10,11 @@ import {
 
 import CustomTable from "../CustomTable";
 
-import { useSaleStore } from "../../store/sale.js";
+import { useCartStore } from "../../store/cart.js";
 
 const SaleProductsTable = ({ products }) => {
 
-    const { removeProduct } = useSaleStore();
+    const { removeProduct } = useCartStore();
 
     const handleDelete = (id) => {
         removeProduct(id);

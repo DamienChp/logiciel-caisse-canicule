@@ -1,28 +1,5 @@
 import mongoose from "mongoose";
 
-const sizeSchema = new mongoose.Schema(
-    {
-        size: { 
-            type: String, 
-            required: true, 
-            trim: true 
-        },
-        stock: { 
-            type: Number, 
-            default: 0,
-            min: 0
-        },
-        barcode : { 
-            type: String, 
-            default: null, 
-            trim: true
-        }
-    },
-    {
-        _id: false
-    }
-);
-
 const productSchema = new mongoose.Schema({
     name : {
         type: String, 
@@ -82,7 +59,6 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    // size : [sizeSchema],
 }, { timestamps : true });
 
 

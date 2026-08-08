@@ -1,64 +1,56 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
-export const useSaleStore = create(
-    persist(
-        (set) => ({
-            client: null,
-            cart: [],
+export const useSaleStore = create((set) => ({
+    loading: false,
+    error: null,
 
-            setClient: (client) =>
-                set({ client }),
+    createSale: async (saleData) => {
+        set({
+            loading: true,
+            error: null
+        });
 
-            addProduct: (product) =>
-                set((state) => {
+        try {
+            const response = await fetch("/api/sales", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(saleData)
+            });
 
-                    const existing = state.cart.find(
-                        item => item._id === product._id
-                    );
+            const data = await response.json();
 
-                    if (existing) {
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Erreur lors de la création de la vente"
+                );
+            }
 
-                        return {
-                            cart: state.cart.map(
-                                item =>
-                                    item._id === product._id
-                                        ? {
-                                            ...item,
-                                            quantity: item.quantity + 1
-                                        }
-                                        : item
-                            )
-                        };
-                    }
+            set({
+                loading: false
+            });
 
-                    return {
-                        cart: [
-                            ...state.cart,
-                            {
-                                ...product,
-                                quantity: 1
-                            }
-                        ]
-                    };
-                }),
+            return {
+                success: true,
+                sale: data.sale
+            };
 
-            removeProduct: (productId) =>
-                set((state) => ({
-                    cart: state.cart.filter(
-                        item => item._id !== productId
-                    )
-                })),
+        } catch (error) {
+            console.error(
+                "Erreur création vente :",
+                error
+            );
 
-            clearSale: () =>
-                set({
-                    client: null,
-                    cart: []
-                })
-        }),
+            set({
+                loading: false,
+                error: error.message
+            });
 
-        {
-            name: "current-sale"
+            return {
+                success: false,
+                error: error.message
+            };
         }
-    )
-);
+    }
+}));

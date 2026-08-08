@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import productRoutes from "./routes/product.route.js";
 import customerRoutes from "./routes/customer.route.js";
 import brandRoutes from "./routes/brand.route.js";
+import saleRoutes from "./routes/sale.route.js"
 
 dotenv.config(); // to use the .env file
 
@@ -17,6 +18,8 @@ app.use(express.json()); // allow to accept json data in the body
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/brands", brandRoutes);
+app.use("/api/sales", saleRoutes);
+
 
 
 // app.listen(PORT, () => {

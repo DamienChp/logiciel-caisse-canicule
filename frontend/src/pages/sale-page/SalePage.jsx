@@ -11,9 +11,10 @@ import {
 import BarcodeScanner from "../../components/stock/BarcodeScanner.jsx"
 import ClientSelector from '../../components/sale/ClientSelector.jsx';
 import SaleProductTable from "../../components/sale/SaleProductTable.jsx"
+import PaymentButtons from '../../components/sale/PaymentButtons.jsx';
 
 import { useProductStore } from "../../store/product.js"
-import { useSaleStore } from '../../store/sale.js';
+import { useCartStore } from '../../store/cart.js';
 
 const SalePage = () => {
 
@@ -24,7 +25,7 @@ const SalePage = () => {
         cart,
         setClient,
         addProduct
-    } = useSaleStore();
+    } = useCartStore();
 
     useEffect(() => {
         getAllProducts();
@@ -198,7 +199,6 @@ return (
 
                   <SaleProductTable
                       products={cart}
-                    //   setProducts={setCart}
                   />
 
               </Box>
@@ -225,38 +225,8 @@ return (
               Encaissement
           </Typography>
 
-          <Box
-              sx={{
-                  display:"flex",
-                  gap:2
-              }}
-          >
-
-              <Button
-                  variant="contained"
-                  fullWidth
-              >
-                  CB
-              </Button>
-
-
-              <Button
-                  variant="contained"
-                  fullWidth
-              >
-                  Cash
-              </Button>
-
-
-              <Button
-                  variant="contained"
-                  fullWidth
-              >
-                  Chèque
-              </Button>
-
-
-          </Box>
+          <PaymentButtons
+          />
 
 
       </Paper>
