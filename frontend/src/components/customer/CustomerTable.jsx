@@ -63,8 +63,14 @@ const CustomerTable = ({searchText}) => {
         },
 
         {
-            field:"points",
-            headerName:"Points",
+            field:"city",
+            headerName:"Ville",
+            flex:1
+        },
+
+        {
+            field:"totalSpent",
+            headerName:"Vente",
             flex:1
         },
 
@@ -108,7 +114,8 @@ const CustomerTable = ({searchText}) => {
             fullName:`${customer.first_name} ${customer.last_name}`,
             email: customer.email,
             phone_number: customer.phone_number,
-            points: customer.points
+            city: customer.city,
+            totalSpent: customer.totalSpent || 0
         }
 
 

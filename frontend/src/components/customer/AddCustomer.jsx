@@ -20,7 +20,8 @@ const AddCustomer = ({open,onClose}) => {
         first_name:"",
         last_name:"",
         email:"",
-        phone_number:""
+        phone_number:"",
+        city: ""
     })
 
     const handleChange = (e)=>{
@@ -40,7 +41,8 @@ const AddCustomer = ({open,onClose}) => {
             first_name:"",
             last_name:"",
             email:"",
-            phone_number:""
+            phone_number:"",
+            city:""
         })
 
         getAllCustomers()
@@ -95,10 +97,22 @@ const AddCustomer = ({open,onClose}) => {
                     value={customer.phone_number}
                     onChange={handleChange}
                 />
+
+                <TextField
+                    margin="dense"
+                    label="Ville"
+                    name="city"
+                    fullWidth
+                    value={customer.city}
+                    onChange={handleChange}
+                />
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onClose}>
+                <Button 
+                    variant="contained"
+                    onClick={onClose}
+                >
                     Annuler
                 </Button>
 

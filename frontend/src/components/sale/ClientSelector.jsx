@@ -18,9 +18,12 @@ import { Close } from "@mui/icons-material";
 
 import { useCustomerStore } from "../../store/customer";
 
+import AddCustomer from "../customer/AddCustomer";
+
 const ClientSelector = ({ client, setClient }) => {
 
     const [open, setOpen] = useState(false);
+    const [openClient, setOpenClient] = useState(false);
 
     const [search, setSearch] = useState("");
 
@@ -112,6 +115,7 @@ const ClientSelector = ({ client, setClient }) => {
 
                     <Button
                         variant="contained"
+                        onClick={()=>setOpenClient(true)}                 
                         sx={{
                             mb:2
                         }}
@@ -154,10 +158,14 @@ const ClientSelector = ({ client, setClient }) => {
 
                     }
 
-
                     </List>
                 </DialogContent>
             </Dialog>
+
+            <AddCustomer
+                open={openClient}
+                onClose={()=>setOpenClient(false)}
+            />
 
         </>
 

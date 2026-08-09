@@ -131,7 +131,7 @@ const ImportStock = ({ open, onClose, onImportSuccess }) => {
                     </Typography>
 
                     <Button
-                        variant="outlined"
+                        variant="contained"
                         component="label"
                     >
                         Sélectionner un fichier
@@ -168,6 +168,7 @@ const ImportStock = ({ open, onClose, onImportSuccess }) => {
 
             <DialogActions>
                 <Button
+                    variant="contained"
                     onClick={onClose}
                 >
                     Annuler

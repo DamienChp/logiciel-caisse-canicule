@@ -18,6 +18,10 @@ const customerSchema = new mongoose.Schema({
         type: String, 
         require: true 
     },
+    city: {
+        type: String, 
+        require: true  
+    },
     totalSpent: {
         type: Number,
         default: 0,

@@ -1,21 +1,25 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import {
     Box,
     Paper,
     Typography,
-    TextField
+    TextField,
+    Button
 } from '@mui/material'
 
 import BarcodeScanner from "../../components/stock/BarcodeScanner.jsx"
 import ClientSelector from '../../components/sale/ClientSelector.jsx';
 import SaleProductTable from "../../components/sale/SaleProductTable.jsx"
 import PaymentButtons from '../../components/sale/PaymentButtons.jsx';
+import ProductSelector from '../../components/sale/ProductSelector.jsx';
 
 import { useProductStore } from "../../store/product.js"
 import { useCartStore } from '../../store/cart.js';
 
 const SalePage = () => {
+
+    const [open, setOpen] = useState(false)
 
     const {
         products,
@@ -59,6 +63,9 @@ const SalePage = () => {
 
     }, [products, addProduct]);
 
+    const handleProductSelect = useCallback((product) => {
+        addProduct(product);
+    }, [addProduct]);
 
     return (
 
@@ -236,13 +243,26 @@ const SalePage = () => {
                         overflow: "hidden"
                     }}
                 >
-
-                    <Typography
-                        variant="h6"
-                        mb={2}
+                    <Box
+                        pb={2}
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
                     >
-                        Produits
-                    </Typography>
+                        <Typography
+                            variant="h6"
+                        >
+                            Produits
+                        </Typography>
+
+                        <ProductSelector
+                            products={products}
+                            onSelect={handleProductSelect}
+                        />
+                    </Box>
+
 
                     <Box
                         sx={{
