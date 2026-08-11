@@ -1,7 +1,8 @@
 import Sale from "../models/sale.model.js";
 import Customer from "../models/customer.model.js";
 import Counter from "../models/counter.model.js"
-// import Product from "../models/product.model.js";
+
+import { generateReceiptPDF } from "../services/receipt.service.js";
 
 export const createSale = async (req, res) => {
     try {
@@ -66,7 +67,61 @@ export const createSale = async (req, res) => {
             }
         }
 
-        // Création de la vente
+        // ==========================================
+        // VÉRIFICATION DU REÇU
+        // ==========================================
+
+        if (
+            receiptMethod &&
+            !["email", "phone"].includes(
+                receiptMethod
+            )
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Le moyen d'envoi du reçu est invalide"
+            });
+
+        }
+
+        // ==========================================
+        // VÉRIFICATION EMAIL
+        // ==========================================
+
+        if (
+            receiptMethod === "email" &&
+            !customerData?.email
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Ce client ne possède pas d'adresse email"
+            });
+
+        }
+
+        // ==========================================
+        // VÉRIFICATION TÉLÉPHONE
+        // ==========================================
+
+        if (
+            receiptMethod === "phone" &&
+            !customerData?.phone_number
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Ce client ne possède pas de numéro de téléphone"
+            });
+
+        }
+
+        // ==========================================
+        // NUMÉRO DE VENTE
+        // ==========================================
 
         const counter = await Counter.findOneAndUpdate(
             { _id: "sale" },
@@ -79,7 +134,15 @@ export const createSale = async (req, res) => {
 
         const saleNumber = counter.sequence;
 
+        // ==========================================
+        // ARRONDI DU TOTAL
+        // ==========================================
+
         const roundedTotal = Math.round(total * 100) / 100;
+
+        // ==========================================
+        // CRÉATION DE LA VENTE
+        // ==========================================
 
         const sale = await Sale.create({
             saleNumber,
@@ -160,5 +223,81 @@ export const createSale = async (req, res) => {
             success: false,
             message: error.message
         });
+    }
+};
+
+
+export const getSaleReceipt = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        // ==========================================
+        // RÉCUPÉRATION DE LA VENTE
+        // ==========================================
+
+        const sale = await Sale
+            .findById(id)
+            .populate("customer")
+            .populate("products.product");
+
+
+        if (!sale) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Vente introuvable"
+            });
+
+        }
+
+
+        // ==========================================
+        // GÉNÉRATION DU PDF
+        // ==========================================
+
+        const pdfBuffer =
+            await generateReceiptPDF(sale);
+
+
+        // ==========================================
+        // CONFIGURATION DE LA RÉPONSE
+        // ==========================================
+
+        res.setHeader(
+            "Content-Type",
+            "application/pdf"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            `inline; filename="recu-${sale.saleNumber}.pdf"`
+        );
+
+
+        // ==========================================
+        // ENVOI DU PDF
+        // ==========================================
+
+        res.send(pdfBuffer);
+
+    } catch (error) {
+
+        console.error(
+            "Erreur génération reçu :",
+            error
+        );
+
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                "Impossible de générer le reçu"
+
+        });
+
     }
 };
