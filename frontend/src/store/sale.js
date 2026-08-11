@@ -52,5 +52,63 @@ export const useSaleStore = create((set) => ({
                 error: error.message
             };
         }
+    },
+
+    sendSaleReceipt: async (saleId) => {
+
+        set({
+            loading: true,
+            error: null
+        });
+
+
+        try {
+
+            const response = await fetch(`/api/sales/${saleId}/send-receipt`,
+                {
+                    method: "POST"
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Erreur lors de l'envoi du reçu"
+                );
+
+            }
+
+            set({
+                loading: false
+            });
+
+            return {
+                success: true,
+                message: data.message
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "Erreur envoi reçu :",
+                error
+            );
+
+
+            set({
+                loading: false,
+                error: error.message
+            });
+
+
+            return {
+                success: false,
+                error: error.message
+            };
+        }
     }
 }));

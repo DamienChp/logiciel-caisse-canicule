@@ -45,6 +45,10 @@ const PaymentButtons = () => {
         (state) => state.createSale
     );
 
+    const sendSaleReceipt = useSaleStore(
+        (state) => state.sendSaleReceipt
+    );
+
     const loading = useSaleStore(
         (state) => state.loading
     );
@@ -81,6 +85,7 @@ const PaymentButtons = () => {
     };
 
     const processSale = async (paymentMethod, receiptMethod) => {
+
         const saleData = {
 
             // Peut être null si aucun client
@@ -107,12 +112,46 @@ const PaymentButtons = () => {
             receiptMethod
         };
 
+        // Création de la vente
+
         const result = await createSale(
             saleData
         );
 
-        if (result.success) {
+        // Récuperation de l'ID de la vente
+        
+        const saleId = result.sale._id;
 
+
+        // Envoi du recu par mail 
+
+        if (receiptMethod === "email") {
+
+            const receiptResult = await sendSaleReceipt(saleId);
+
+
+            if (!receiptResult.success) {
+
+                console.error(
+                    receiptResult.error
+                );
+
+                return;
+            }
+
+        };
+
+
+        if (receiptMethod === "phone") {
+
+            // On fera Twilio ici
+            console.log(
+                "Envoi téléphone à faire"
+            );
+
+        };
+
+        if (result.success) {
             clearCart();
 
             // Ferme la popup
@@ -120,6 +159,13 @@ const PaymentButtons = () => {
 
             setSelectedPayment(null);
         };
+
+        // clearCart();
+
+        // setReceiptDialogOpen(false);
+
+        // setSelectedPayment(null);
+
     };
 
     const handleReceipt = async (receiptMethod) => {

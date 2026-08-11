@@ -19,7 +19,7 @@ import { useCartStore } from '../../store/cart.js';
 
 const SalePage = () => {
 
-    const [open, setOpen] = useState(false)
+    // const [open, setOpen] = useState(false)
 
     const {
         products,

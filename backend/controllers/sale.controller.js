@@ -3,6 +3,7 @@ import Customer from "../models/customer.model.js";
 import Counter from "../models/counter.model.js"
 
 import { generateReceiptPDF } from "../services/receipt.service.js";
+import { sendReceiptByEmail } from "../services/email.service.js";
 
 export const createSale = async (req, res) => {
     try {
@@ -226,7 +227,6 @@ export const createSale = async (req, res) => {
     }
 };
 
-
 export const getSaleReceipt = async (req, res) => {
 
     try {
@@ -258,8 +258,7 @@ export const getSaleReceipt = async (req, res) => {
         // GÉNÉRATION DU PDF
         // ==========================================
 
-        const pdfBuffer =
-            await generateReceiptPDF(sale);
+        const pdfBuffer = await generateReceiptPDF(sale);
 
 
         // ==========================================
@@ -273,7 +272,7 @@ export const getSaleReceipt = async (req, res) => {
 
         res.setHeader(
             "Content-Disposition",
-            `inline; filename="recu-${sale.saleNumber}.pdf"`
+            `inline; filename="recu-canicule-${sale.saleNumber}.pdf"`
         );
 
 
@@ -296,6 +295,113 @@ export const getSaleReceipt = async (req, res) => {
 
             message:
                 "Impossible de générer le reçu"
+
+        });
+
+    }
+};
+
+export const sendSaleReceipt = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        // ==========================================
+        // RÉCUPÉRER LA VENTE
+        // ==========================================
+
+        const sale = await Sale
+            .findById(id)
+            .populate("customer")
+            .populate("products.product");
+
+
+        if (!sale) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Vente introuvable"
+            });
+
+        }
+
+
+        // ==========================================
+        // VÉRIFIER LE CLIENT
+        // ==========================================
+
+        if (!sale.customer) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Cette vente n'a pas de client associé"
+            });
+
+        }
+
+
+        // ==========================================
+        // VÉRIFIER L'EMAIL
+        // ==========================================
+
+        if (!sale.customer.email) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Ce client n'a pas d'adresse email"
+            });
+
+        }
+
+
+        // ==========================================
+        // GÉNÉRER LE PDF
+        // ==========================================
+
+        const pdfBuffer = await generateReceiptPDF(sale);
+
+
+        // ==========================================
+        // ENVOYER LE MAIL
+        // ==========================================
+
+        await sendReceiptByEmail({
+            email: sale.customer.email,
+            pdfBuffer,
+            saleNumber: sale.saleNumber
+        });
+
+
+        // ==========================================
+        // RÉPONSE
+        // ==========================================
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                "Reçu envoyé par email"
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Erreur envoi reçu :",
+            error
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Impossible d'envoyer le reçu"
 
         });
 
