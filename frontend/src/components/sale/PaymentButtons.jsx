@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 import {
     Button,
@@ -8,16 +8,14 @@ import {
     DialogContent,
     DialogActions,
     Typography,
+    LinearProgress,
+    Snackbar,
+    Alert
 } from "@mui/material";
 
-// import {
-//     CreditCard,
-//     Payments,
-//     Receipt
-// } from "@mui/icons-material";
-
 import { useCartStore } from "../../store/cart";
-import { useSaleStore } from "../../store/sale"
+import { useSaleStore } from "../../store/sale";
+
 
 const PaymentButtons = () => {
 
@@ -41,6 +39,7 @@ const PaymentButtons = () => {
         (state) => state.clearCart
     );
 
+
     const createSale = useSaleStore(
         (state) => state.createSale
     );
@@ -53,16 +52,38 @@ const PaymentButtons = () => {
         (state) => state.loading
     );
 
-    // Moyen de paiement sélectionné
-    const [selectedPayment, setSelectedPayment] = useState(null);
 
-    // Ouverture de la fenêtre reçu
-    const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+    // MOYEN DE PAIEMENT SÉLECTIONNÉ
+    const [selectedPayment, setSelectedPayment] =
+        useState(null);
 
+
+    // OUVERTURE POPUP REÇU
+    const [receiptDialogOpen, setReceiptDialogOpen] =
+        useState(false);
+
+
+    // ENVOI DU REÇU EN COURS
+    const [sendingReceipt, setSendingReceipt] = useState(false);
+
+
+    // ==========================================
+    // MESSAGE DE SUCCÈS
+    // ==========================================
+
+    const [successMessage, setSuccessMessage] = useState("");
+
+
+    const [successOpen, setSuccessOpen] = useState(false);
+
+
+    // ==========================================
+    // CLIQUE SUR CB / CASH / CHÈQUE
+    // ==========================================
 
     const handlePayment = async (paymentMethod) => {
 
-        // Aucun produit dans le panier
+        // Aucun produit
         if (cart.length === 0) {
             return;
         }
@@ -70,27 +91,34 @@ const PaymentButtons = () => {
         // On mémorise le moyen de paiement
         setSelectedPayment(paymentMethod);
 
-        // Si un client est associé,
-        // on demande comment envoyer le reçu
+        // AVEC CLIENT
         if (client) {
             setReceiptDialogOpen(true);
             return;
         }
 
-        // Sinon on enregistre directement
+        // SANS CLIENT
         await processSale(
             paymentMethod,
             null
         );
+
     };
+
+
+    // ==========================================
+    // CRÉATION DE LA VENTE
+    // ==========================================
 
     const processSale = async (paymentMethod, receiptMethod) => {
 
+        // DONNÉES DE LA VENTE
         const saleData = {
 
-            // Peut être null si aucun client
+            // Client éventuellement null
             customer: client?._id || null,
 
+            // Produits du panier
             products: cart.map((product) => ({
                 product: product._id,
                 size: product.size || null,
@@ -112,67 +140,130 @@ const PaymentButtons = () => {
             receiptMethod
         };
 
-        // Création de la vente
 
-        const result = await createSale(
-            saleData
-        );
+        // CRÉATION DE LA VENTE
+        const result = await createSale(saleData);
 
-        // Récuperation de l'ID de la vente
-        
+        // Vente non créée
+        if (!result.success) {
+            return;
+        }
+
+        // ID DE LA VENTE
         const saleId = result.sale._id;
 
-
-        // Envoi du recu par mail 
+        // ======================================
+        // EMAIL
+        // ======================================
 
         if (receiptMethod === "email") {
 
+            setSendingReceipt(true);
+
             const receiptResult = await sendSaleReceipt(saleId);
 
-
+            // Envoi échoué
             if (!receiptResult.success) {
-
-                console.error(
-                    receiptResult.error
-                );
-
+                setSendingReceipt(false);
                 return;
             }
 
-        };
+            // Envoi terminé
+            setSendingReceipt(false);
 
+            // Message de succès
+            setSuccessMessage("Le reçu a bien été envoyé par email.");
+
+            setSuccessOpen(true);
+        }
+
+
+        // ======================================
+        // TÉLÉPHONE
+        // ======================================
 
         if (receiptMethod === "phone") {
 
-            // On fera Twilio ici
-            console.log(
-                "Envoi téléphone à faire"
-            );
+            setSendingReceipt(true);
 
-        };
+            /*
+            =====================================
+            À FAIRE PLUS TARD
 
-        if (result.success) {
-            clearCart();
+            const receiptResult =
+                await sendSaleReceiptByPhone(
+                    saleId
+                );
 
-            // Ferme la popup
-            setReceiptDialogOpen(false);
+            if (!receiptResult.success) {
 
-            setSelectedPayment(null);
-        };
+                setSendingReceipt(false);
 
-        // clearCart();
+                return;
+            }
+            =====================================
+            */
 
-        // setReceiptDialogOpen(false);
+            // Pour le moment
+            // on simule la fin de l'envoi
+            setSendingReceipt(false);
 
-        // setSelectedPayment(null);
+            setSuccessMessage("Le reçu sera envoyé par téléphone.");
 
+            setSuccessOpen(true);
+        }
+
+        // ======================================
+        // AUCUN RECU
+        // ======================================
+
+        if (receiptMethod === null ) {
+            let paymentMethodFR = paymentMethod;
+
+            if (paymentMethod === "card") {
+                paymentMethodFR = "carte";
+            }
+
+            if (paymentMethod === "cash") {
+                paymentMethodFR = "espèces";
+            }
+
+            if (paymentMethod === "cheque") {
+                paymentMethodFR = "chèque";
+            }
+            setSuccessMessage(`Vente par ${paymentMethodFR} à bien été enregistré`);
+            
+            setSuccessOpen(true);
+        }
+
+
+        // ======================================
+        // FIN DE LA VENTE
+        // ======================================
+
+        clearCart();
+
+        // Fermer le popup
+        setReceiptDialogOpen(false);
+
+        // Réinitialiser le paiement
+        setSelectedPayment(null);
     };
 
-    const handleReceipt = async (receiptMethod) => {
 
+    // ==========================================
+    // CHOIX DU REÇU
+    // ==========================================
+
+    const handleReceipt = async (
+        receiptMethod
+    ) => {
+
+        // Aucun moyen de paiement
         if (!selectedPayment) {
             return;
         }
+
 
         await processSale(
             selectedPayment,
@@ -181,9 +272,18 @@ const PaymentButtons = () => {
     };
 
 
+    // ==========================================
+    // AFFICHAGE
+    // ==========================================
+
     return (
 
         <>
+
+            {/* ================================= */}
+            {/* BOUTONS DE PAIEMENT                */}
+            {/* ================================= */}
+
             <Stack
                 direction="row"
                 spacing={2}
@@ -192,14 +292,23 @@ const PaymentButtons = () => {
                 }}
             >
 
+                {/* ============================= */}
+                {/* CB                            */}
+                {/* ============================= */}
+
                 <Button
                     variant="contained"
-                    // startIcon={<CreditCard />}
+
                     disabled={
                         loading ||
+                        sendingReceipt ||
                         cart.length === 0
                     }
-                    onClick={() => handlePayment("card")}
+
+                    onClick={() =>
+                        handlePayment("card")
+                    }
+
                     sx={{
                         flex: 1
                     }}
@@ -207,14 +316,24 @@ const PaymentButtons = () => {
                     CB
                 </Button>
 
+
+                {/* ============================= */}
+                {/* CASH                          */}
+                {/* ============================= */}
+
                 <Button
                     variant="contained"
-                    // startIcon={<Payments />}
+
                     disabled={
                         loading ||
+                        sendingReceipt ||
                         cart.length === 0
                     }
-                    onClick={() => handlePayment("cash")}
+
+                    onClick={() =>
+                        handlePayment("cash")
+                    }
+
                     sx={{
                         flex: 1
                     }}
@@ -222,14 +341,24 @@ const PaymentButtons = () => {
                     Cash
                 </Button>
 
+
+                {/* ============================= */}
+                {/* CHÈQUE                        */}
+                {/* ============================= */}
+
                 <Button
                     variant="contained"
-                    // startIcon={<Receipt />}
+
                     disabled={
                         loading ||
+                        sendingReceipt ||
                         cart.length === 0
                     }
-                    onClick={() => handlePayment("cheque")}
+
+                    onClick={() =>
+                        handlePayment("cheque")
+                    }
+
                     sx={{
                         flex: 1
                     }}
@@ -239,27 +368,75 @@ const PaymentButtons = () => {
 
             </Stack>
 
+
+            {/* ================================= */}
+            {/* POPUP CHOIX DU REÇU               */}
+            {/* ================================= */}
+
             <Dialog
                 open={receiptDialogOpen}
-                onClose={() =>
-                    setReceiptDialogOpen(false)
-                }
+
+                onClose={() => {
+
+                    if (!sendingReceipt) {
+
+                        setReceiptDialogOpen(
+                            false
+                        );
+                    }
+
+                }}
+
                 fullWidth
+
                 maxWidth="xs"
             >
 
                 <DialogTitle>
-                    Envoyer le reçu 
+                    Envoyer le reçu
                 </DialogTitle>
+
 
                 <DialogContent>
 
                     <Typography>
-                        Comment souhaitez-vous envoyer
-                        le reçu à {client?.first_name} {client?.last_name} ?
+                        Comment souhaitez-vous
+                        envoyer le reçu à{" "}
+
+                        {client?.first_name}{" "}
+
+                        {client?.last_name} ?
                     </Typography>
 
+
+                    {/* ========================= */}
+                    {/* BARRE DE CHARGEMENT       */}
+                    {/* ========================= */}
+
+                    {sendingReceipt && (
+
+                        <Stack
+                            spacing={1}
+                            sx={{
+                                mt: 3
+                            }}
+                        >
+
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                            >
+                                Envoi du reçu...
+                            </Typography>
+
+
+                            <LinearProgress />
+
+                        </Stack>
+                    )}
+
                 </DialogContent>
+
 
                 <DialogActions
                     sx={{
@@ -269,37 +446,68 @@ const PaymentButtons = () => {
                     }}
                 >
 
+                    {/* ========================= */}
+                    {/* EMAIL                     */}
+                    {/* ========================= */}
+
                     <Button
                         fullWidth
                         variant="contained"
+
                         onClick={() =>
-                            handleReceipt("email")
+                            handleReceipt(
+                                "email"
+                            )
                         }
-                        disabled={loading}
+
+                        disabled={
+                            loading ||
+                            sendingReceipt
+                        }
                     >
                         Envoyer par email
                     </Button>
 
 
+                    {/* ========================= */}
+                    {/* TÉLÉPHONE                 */}
+                    {/* ========================= */}
+
                     <Button
                         fullWidth
                         variant="contained"
+
                         onClick={() =>
-                            handleReceipt("phone")
+                            handleReceipt(
+                                "phone"
+                            )
                         }
-                        disabled={loading}
+
+                        disabled={
+                            loading ||
+                            sendingReceipt
+                        }
                     >
                         Envoyer par téléphone
                     </Button>
 
 
+                    {/* ========================= */}
+                    {/* NE PAS ENVOYER            */}
+                    {/* ========================= */}
+
                     <Button
                         fullWidth
                         variant="outlined"
+
                         onClick={() =>
                             handleReceipt(null)
                         }
-                        disabled={loading}
+
+                        disabled={
+                            loading ||
+                            sendingReceipt
+                        }
                     >
                         Ne pas envoyer
                     </Button>
@@ -307,8 +515,48 @@ const PaymentButtons = () => {
                 </DialogActions>
 
             </Dialog>
+
+
+            {/* ================================= */}
+            {/* POPUP SUCCÈS                      */}
+            {/* ================================= */}
+
+            <Snackbar
+                open={successOpen}
+
+                autoHideDuration={3000}
+
+                onClose={() =>
+                    setSuccessOpen(false)
+                }
+
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center"
+                }}
+            >
+
+                <Alert
+                    onClose={() =>
+                        setSuccessOpen(false)
+                    }
+
+                    severity="success"
+
+                    variant="filled"
+
+                    sx={{
+                        width: "100%"
+                    }}
+                >
+                    {successMessage}
+                </Alert>
+
+            </Snackbar>
+
         </>
     );
 };
+
 
 export default PaymentButtons;
