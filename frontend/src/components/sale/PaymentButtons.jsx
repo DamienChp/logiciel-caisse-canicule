@@ -1,6 +1,13 @@
+import React, { useState } from 'react'
+
 import {
     Button,
-    Stack
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Typography,
 } from "@mui/material";
 
 // import {
@@ -42,6 +49,13 @@ const PaymentButtons = () => {
         (state) => state.loading
     );
 
+    // Moyen de paiement sélectionné
+    const [selectedPayment, setSelectedPayment] = useState(null);
+
+    // Ouverture de la fenêtre reçu
+    const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+
+
     const handlePayment = async (paymentMethod) => {
 
         // Aucun produit dans le panier
@@ -49,6 +63,24 @@ const PaymentButtons = () => {
             return;
         }
 
+        // On mémorise le moyen de paiement
+        setSelectedPayment(paymentMethod);
+
+        // Si un client est associé,
+        // on demande comment envoyer le reçu
+        if (client) {
+            setReceiptDialogOpen(true);
+            return;
+        }
+
+        // Sinon on enregistre directement
+        await processSale(
+            paymentMethod,
+            null
+        );
+    };
+
+    const processSale = async (paymentMethod, receiptMethod) => {
         const saleData = {
 
             // Peut être null si aucun client
@@ -69,75 +101,167 @@ const PaymentButtons = () => {
             total: getTotal(),
 
             // Moyen de paiement
-            paymentMethod
+            paymentMethod,
+
+            // Moyen d'envoi du reçu
+            receiptMethod
         };
 
         const result = await createSale(
             saleData
         );
 
-        // On vide le panier uniquement
-        // si la vente a bien été enregistrée
         if (result.success) {
+
             clearCart();
-        }
+
+            // Ferme la popup
+            setReceiptDialogOpen(false);
+
+            setSelectedPayment(null);
+        };
     };
 
+    const handleReceipt = async (receiptMethod) => {
+
+        if (!selectedPayment) {
+            return;
+        }
+
+        await processSale(
+            selectedPayment,
+            receiptMethod
+        );
+    };
+
+
     return (
-        <Stack
-            direction="row"
-            spacing={2}
-            sx={{
-                width: "100%"
-            }}
-        >
 
-            <Button
-                variant="contained"
-                // startIcon={<CreditCard />}
-                disabled={
-                    loading ||
-                    cart.length === 0
-                }
-                onClick={() => handlePayment("card")}
+        <>
+            <Stack
+                direction="row"
+                spacing={2}
                 sx={{
-                    flex: 1
+                    width: "100%"
                 }}
             >
-                CB
-            </Button>
 
-            <Button
-                variant="contained"
-                // startIcon={<Payments />}
-                disabled={
-                    loading ||
-                    cart.length === 0
+                <Button
+                    variant="contained"
+                    // startIcon={<CreditCard />}
+                    disabled={
+                        loading ||
+                        cart.length === 0
+                    }
+                    onClick={() => handlePayment("card")}
+                    sx={{
+                        flex: 1
+                    }}
+                >
+                    CB
+                </Button>
+
+                <Button
+                    variant="contained"
+                    // startIcon={<Payments />}
+                    disabled={
+                        loading ||
+                        cart.length === 0
+                    }
+                    onClick={() => handlePayment("cash")}
+                    sx={{
+                        flex: 1
+                    }}
+                >
+                    Cash
+                </Button>
+
+                <Button
+                    variant="contained"
+                    // startIcon={<Receipt />}
+                    disabled={
+                        loading ||
+                        cart.length === 0
+                    }
+                    onClick={() => handlePayment("cheque")}
+                    sx={{
+                        flex: 1
+                    }}
+                >
+                    Chèque
+                </Button>
+
+            </Stack>
+
+            <Dialog
+                open={receiptDialogOpen}
+                onClose={() =>
+                    setReceiptDialogOpen(false)
                 }
-                onClick={() => handlePayment("cash")}
-                sx={{
-                    flex: 1
-                }}
+                fullWidth
+                maxWidth="xs"
             >
-                Cash
-            </Button>
 
-            <Button
-                variant="contained"
-                // startIcon={<Receipt />}
-                disabled={
-                    loading ||
-                    cart.length === 0
-                }
-                onClick={() => handlePayment("cheque")}
-                sx={{
-                    flex: 1
-                }}
-            >
-                Chèque
-            </Button>
+                <DialogTitle>
+                    Envoyer le reçu 
+                </DialogTitle>
 
-        </Stack>
+                <DialogContent>
+
+                    <Typography>
+                        Comment souhaitez-vous envoyer
+                        le reçu à {client?.first_name} {client?.last_name} ?
+                    </Typography>
+
+                </DialogContent>
+
+                <DialogActions
+                    sx={{
+                        flexDirection: "column",
+                        gap: 1,
+                        p: 2
+                    }}
+                >
+
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() =>
+                            handleReceipt("email")
+                        }
+                        disabled={loading}
+                    >
+                        Envoyer par email
+                    </Button>
+
+
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() =>
+                            handleReceipt("phone")
+                        }
+                        disabled={loading}
+                    >
+                        Envoyer par téléphone
+                    </Button>
+
+
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={() =>
+                            handleReceipt(null)
+                        }
+                        disabled={loading}
+                    >
+                        Ne pas envoyer
+                    </Button>
+
+                </DialogActions>
+
+            </Dialog>
+        </>
     );
 };
 

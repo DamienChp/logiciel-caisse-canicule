@@ -40,6 +40,12 @@ const saleProductSchema = new mongoose.Schema(
 
 const saleSchema = new mongoose.Schema(
     {
+        saleNumber: {
+            type: Number,
+            required: true,
+            unique: true
+        },
+
         customer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
@@ -68,6 +74,12 @@ const saleSchema = new mongoose.Schema(
             type: String,
             enum: ["card", "cash", "cheque"],
             required: true
+        },
+
+        receiptMethod: {
+            type: String,
+            enum: ["email", "phone"],
+            default: null
         }
     },
     {

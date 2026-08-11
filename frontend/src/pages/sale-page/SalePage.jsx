@@ -111,13 +111,18 @@ const SalePage = () => {
 
                     <Box
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1
+                            textAlign: "right",
+                            // display: "flex",
+                            // alignItems: "center",
+                            // gap: 1
                         }}
                     >
 
-                        <Typography>
+                        <Typography
+                            sx={{
+                                mb:1
+                            }}
+                        >
                             Remise panier
                         </Typography>
 

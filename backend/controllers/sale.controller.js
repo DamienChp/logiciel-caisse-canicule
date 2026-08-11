@@ -1,5 +1,6 @@
 import Sale from "../models/sale.model.js";
 import Customer from "../models/customer.model.js";
+import Counter from "../models/counter.model.js"
 // import Product from "../models/product.model.js";
 
 export const createSale = async (req, res) => {
@@ -9,7 +10,8 @@ export const createSale = async (req, res) => {
             products,
             total,
             cartDiscount,
-            paymentMethod
+            paymentMethod,
+            receiptMethod
         } = req.body;
 
         // Vérification des produits
@@ -65,14 +67,29 @@ export const createSale = async (req, res) => {
         }
 
         // Création de la vente
+
+        const counter = await Counter.findOneAndUpdate(
+            { _id: "sale" },
+            { $inc: { sequence: 1 } },
+            {
+                new: true,
+                upsert: true
+            }
+        );
+
+        const saleNumber = counter.sequence;
+
         const roundedTotal = Math.round(total * 100) / 100;
 
         const sale = await Sale.create({
+            saleNumber,
+
             customer: customer || null,
             products,
             total: roundedTotal,
             cartDiscount,
-            paymentMethod
+            paymentMethod,
+            receiptMethod: receiptMethod || null
         });
 
         // Si un client est enregistré,
