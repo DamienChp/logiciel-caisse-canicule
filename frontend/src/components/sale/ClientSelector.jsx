@@ -56,26 +56,61 @@ const ClientSelector = ({ client, setClient }) => {
 
                 <Box
                     sx={{
-                        display:"flex",
-                        alignItems:"center",
-                        gap:1
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 2,
+                        px: 2,
+                        py: 1.2,
+                        borderRadius: 2,
+                        bgcolor: "primary.main",
+                        minWidth: 280,
+                        maxWidth: 400
                     }}
                 >
-                    <strong>
 
-                        {client.first_name}
-                        {" "}
-                        {client.last_name}
-
-                    </strong>
-
-                    <IconButton
-                        color="error"
-                        onClick={() => setClient(null)}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            minWidth: 0
+                        }}
                     >
 
-                        <Close/>
+                        <Box
+                            sx={{
+                                fontWeight: 500,
+                                color: "#02595A",
+                                fontSize: "1rem"
+                            }}
+                        >
+                            {client.first_name} {client.last_name}
+                        </Box>
 
+                        <Box
+                            sx={{
+                                fontSize: "0.8rem",
+                                opacity: 0.7
+                            }}
+                        >
+                            {client.phone_number}
+                        </Box>
+
+                    </Box>
+
+                    <IconButton
+                        size="small"
+                        onClick={() => setClient(null)}
+                        sx={{
+                            transition: "all 0.2s ease",
+
+                            "&:hover": {
+                                transform: "rotate(90deg) scale(1.15)",
+                                backgroundColor: "rgba(211, 47, 47, 0.1)"
+                            }
+                        }}
+                    >
+                        <Close fontSize="small" />
                     </IconButton>
 
                 </Box>
