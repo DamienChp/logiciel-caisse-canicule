@@ -7,6 +7,7 @@ import SalePage from "./pages/sale-page/SalePage";
 import StockPage from "./pages/stock-page/StockPage";
 import BrandProducts from "./pages/stock-page/BrandProducts";
 import CustomerPage from "./pages/customer-page/CustomerPage";
+import StatisticPage from "./pages/statistic/StatisticPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/stock" element={<StockPage />} />
           <Route path="/stock/:brand" element={<BrandProducts />} />
           <Route path="/customers" element={<CustomerPage />} />
+          <Route path="/statistic" element={<StatisticPage />} />
         </Routes>
       </Stack>
     </Box>

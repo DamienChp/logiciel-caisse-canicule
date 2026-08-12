@@ -1,43 +1,72 @@
 import { create } from "zustand";
 
 export const useProductStore = create((set) => ({
+
     products: [],
-    setProducts: (products) => set({ products }),
+
+    setProducts: (products) =>
+        set({ products }),
+
+
     createProduct: async (newProduct) => {
-        if (!newProduct.name ||
+
+        if (
+            !newProduct.name ||
             !newProduct.priceHT ||
-            !newProduct.priceTTC ) {
-                return { success: false, message: 'All fields are required' };
-            }
+            !newProduct.priceTTC
+        ) {
+            return {
+                success: false,
+                message: "All fields are required"
+            };
+        }
 
-            const res = await fetch('/api/products', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newProduct)
-            });
+        const res = await fetch("/api/products", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newProduct)
+        });
 
-            const data = await res.json();
-            set((state) => ({
-                products: [...state.products, data.data]
-            }));
+        const data = await res.json();
 
-            return { success: true, message: 'Product created successfully' };
+        set((state) => ({
+            products: [
+                ...state.products,
+                data.data
+            ]
+        }));
+
+        return {
+            success: true,
+            message: "Product created successfully"
+        };
     },
 
-    importStock: async(file) => {
+
+    // ==========================================
+    // ETAPE 1 → ANALYSER LE FICHIER
+    // ==========================================
+
+    analyzeImport: async (file) => {
+
         if (!file) {
             return {
                 success: false,
                 message: "Aucun fichier envoyé"
-            }
+            };
         }
 
         const formData = new FormData();
-        formData.append("file", file);
 
-        const res = await fetch("/api/products/import",
+        formData.append(
+            "file",
+            file
+        );
+
+        const res = await fetch(
+            "/api/products/import/analyze",
             {
                 method: "POST",
                 body: formData
@@ -45,43 +74,145 @@ export const useProductStore = create((set) => ({
         );
 
         const data = await res.json();
-        
+
         if (!res.ok) {
             return {
                 success: false,
-                message: data.message || "Erreur lors de l'import"
+                message:
+                    data.message ||
+                    "Erreur lors de l'analyse du fichier"
             };
         }
 
-        const productsRes = await fetch("/api/products");
-
-        const productsData = await productsRes.json();
-
-        set({ products: productsData.data});
-
         return {
             success: true,
-            message: data.message,
-            data
+            rayons: data.rayons || [],
+            familles: data.familles || []
         };
     },
 
-    getAllProducts: async () => {
-        try {
+    // ==========================================
+    // ETAPE 3 → IMPORTER LE STOCK
+    // ==========================================
 
-            const res = await fetch('/api/products');
+    importStock: async (
+        file,
+        rayons,
+        familles
+    ) => {
 
-            const data = await res.json();
+        if (!file) {
+            return {
+                success: false,
+                message: "Aucun fichier envoyé"
+            };
+        }
 
-            if (!res.ok) {
-                throw new Error(
-                    data.message || "Erreur lors de la récupération des produits"
-                );
+        const formData = new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "rayons",
+            JSON.stringify(rayons)
+        );
+
+        formData.append(
+            "familles",
+            JSON.stringify(familles)
+        );
+
+
+        const res = await fetch(
+            "/api/products/import",
+            {
+                method: "POST",
+                body: formData
             }
+        );
+
+
+        const data = await res.json();
+
+
+        if (!res.ok) {
+
+            return {
+                success: false,
+                message:
+                    data.message ||
+                    "Erreur lors de l'import"
+            };
+
+        }
+
+
+        // Actualisation des produits
+        const productsRes =
+            await fetch("/api/products");
+
+
+        const productsData =
+            await productsRes.json();
+
+
+        if (productsRes.ok) {
 
             set({
-                products: data.data
+                products:
+                    productsData.data
             });
+
+        }
+
+
+        return {
+
+            success: true,
+
+            message:
+                data.message,
+
+            data
+
+        };
+
+    },
+
+
+    // ==========================================
+    // RECUPERER TOUS LES PRODUITS
+    // ==========================================
+
+    getAllProducts: async () => {
+
+        try {
+
+            const res =
+                await fetch("/api/products");
+
+            const data =
+                await res.json();
+
+
+            if (!res.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Erreur lors de la récupération des produits"
+                );
+
+            }
+
+
+            set({
+                products:
+                    data.data
+            });
+
 
         } catch (error) {
 
@@ -91,5 +222,7 @@ export const useProductStore = create((set) => ({
             );
 
         }
-    },
+
+    }
+
 }));

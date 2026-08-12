@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export const useSaleStore = create((set) => ({
+    sales: [],
     loading: false,
     error: null,
 
@@ -50,6 +51,61 @@ export const useSaleStore = create((set) => ({
             return {
                 success: false,
                 error: error.message
+            };
+        }
+    },
+
+    getAllSales: async () => {
+
+        set({
+            loading: true,
+            error: null
+        });
+
+        try {
+
+            const response = await fetch("/api/sales");
+
+            console.log("RESPONSE :", response);
+
+            const data = await response.json();
+
+            console.log("DATA API SALES :", data);
+            console.log("DATA.DATA :", data.data);
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Erreur lors de la récupération des ventes"
+                );
+            }
+
+            set({
+                sales: data.data,
+                loading: false
+            });
+
+            return {
+                success: true,
+                sales: data.data
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Erreur récupération ventes :",
+                error
+            );
+
+            set({
+                loading: false,
+                error: error.message
+            });
+
+            return {
+                success: false,
+                error: error.message,
+                sales: []
             };
         }
     },

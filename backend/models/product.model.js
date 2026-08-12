@@ -44,11 +44,13 @@ const productSchema = new mongoose.Schema({
         type: Number, 
     },
     family: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Famille",
         default: null
     },
     rayon: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Rayon",
         default: null
     },
     season: {

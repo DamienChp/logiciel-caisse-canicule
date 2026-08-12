@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 import {
     Box,
@@ -8,11 +8,11 @@ import {
     Button
 } from '@mui/material'
 
-import BarcodeScanner from "../../components/stock/BarcodeScanner.jsx"
 import ClientSelector from '../../components/sale/ClientSelector.jsx';
 import SaleProductTable from "../../components/sale/SaleProductTable.jsx"
 import PaymentButtons from '../../components/sale/PaymentButtons.jsx';
 import ProductSelector from '../../components/sale/ProductSelector.jsx';
+import BarcodeScanner from '../../components/BarcodeScanner.jsx';
 
 import { useProductStore } from "../../store/product.js"
 import { useCartStore } from '../../store/cart.js';
@@ -33,7 +33,7 @@ const SalePage = () => {
         addProduct,
         cartDiscount,
         setCartDiscount,
-        getSubtotal,
+        // getSubtotal,
         getProductsTotal,
         getTotal
     } = useCartStore();
@@ -42,7 +42,7 @@ const SalePage = () => {
         getAllProducts();
     }, [getAllProducts]);
 
-    const subtotal = getSubtotal();
+    // const subtotal = getSubtotal();
     const productsTotal = getProductsTotal();
     const total = getTotal();
 

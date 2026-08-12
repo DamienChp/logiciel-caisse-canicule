@@ -227,6 +227,44 @@ export const createSale = async (req, res) => {
     }
 };
 
+export const getAllSales = async (req, res) => {
+
+    try {
+
+        const sales = await Sale
+            .find()
+            .populate("customer")
+            .populate("products.product")
+            .sort({ createdAt: -1 });
+
+
+        return res.status(200).json({
+
+            success: true,
+
+            data: sales
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Erreur récupération des ventes :",
+            error
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Impossible de récupérer les ventes"
+
+        });
+
+    }
+};
+
 export const getSaleReceipt = async (req, res) => {
 
     try {
