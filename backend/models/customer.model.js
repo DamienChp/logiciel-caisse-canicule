@@ -3,11 +3,20 @@ import mongoose from "mongoose";
 const customerSchema = new mongoose.Schema({
     first_name : { 
         type: String, 
-        require: true 
+        require: true,
+        // Majscule au nom et prénom
+        set: (value) =>
+            value
+                ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+                : value
     },
     last_name : { 
         type: String, 
-        require: true
+        require: true,
+        set: (value) =>
+            value
+                ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+                : value
     },
     email :  { 
         type: String, 

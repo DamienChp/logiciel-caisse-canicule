@@ -27,20 +27,72 @@ export const useCustomerStore = create((set) => ({
             return { success: true, message: 'Customer created successfully' };
     },
     getAllCustomers: async () => {
-        const res = await fetch('/api/customers');
-        const data = await res.json();
-        set({ customers: data.data });
+        try {
+            const response = await fetch("/api/customers");
 
+            if (!response.ok) {
+                throw new Error("Erreur lors de la récupération des clients");
+            }
+
+            const data = await response.json();
+
+            set({
+                customers: data.data
+            });
+
+        } catch (error) {
+            console.error("Erreur customers :", error);
+        }
     },
     // addCustomer: (customer) => set((state) => ({
     //     customers: [...state.customers, customer]
     // })),
-    // removeCustomer: (customerId) => set((state) => ({
-    //     customers: state.customers.filter(customer => customer.id !== customerId)
-    // })),
-    // updateCustomer: (updatedCustomer) => set((state) => ({
-    //     customers: state.customers.map(customer =>
-    //         customer.id === updatedCustomer.id ? updatedCustomer : customer
-    //     )
-    // }))
+    deleteCustomer: async (id) => {
+        const response = await fetch(`/api/customers/${id}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression du client");
+        }
+
+        set((state) => ({
+            customers: state.customers.filter(
+                (customer) => customer._id !== id
+            ),
+        }));
+    },
+    updateCustomer: async (updatedCustomer) => {
+
+        const response = await fetch(
+            `/api/customers/${updatedCustomer._id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedCustomer)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Erreur lors de la modification du client"
+            );
+        }
+
+        const result = await response.json();
+
+        const customer = result.data;
+
+        set((state) => ({
+            customers: state.customers.map((current) =>
+                current._id === customer._id
+                    ? customer
+                    : current
+            )
+        }));
+
+        return customer;
+    },
 }));

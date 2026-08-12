@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
     Paper,
@@ -23,22 +23,47 @@ import {
 
 
 import { useCustomerStore } from '../../store/customer'
-import CustomTable from '../CustomTable.jsx'
+
+import CustomTable from '../CustomTable.jsx';
+import EditCustomer from './EditCustomer.jsx';
 
 
 const CustomerTable = ({searchText}) => {
 
+    const { customers, deleteCustomer, getAllCustomers } = useCustomerStore();
 
-    const { customers } = useCustomerStore()
+    const [editOpen, setEditOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
+    useEffect(() => {
+        getAllCustomers();
+    }, [getAllCustomers]);
 
+    const handleEdit = (customer) => {
+        setSelectedCustomer(customer);
+        setEditOpen(true);
+    };
 
-    const handleDelete = (id)=>{
+    const handleDelete = async (id) => {
 
-        console.log(
-            "Supprimer client :",
-            id
-        )
+        const confirmed = window.confirm(
+            "Voulez-vous vraiment supprimer ce client ?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await deleteCustomer(id);
+
+        } catch (error) {
+
+            console.error(
+                "Erreur lors de la suppression du client :",
+                error
+            );
+
+        }
 
     };
 
@@ -84,9 +109,8 @@ const CustomerTable = ({searchText}) => {
                 <>
 
                     <IconButton
-                        component={Link}
-                        to={`/customers/${params.row.id}`}
-                        color="primary"
+                        onClick={() => handleEdit(params.row.customer)}
+                        color="info"
                     >
                         <Edit/>
                     </IconButton>
@@ -111,6 +135,7 @@ const CustomerTable = ({searchText}) => {
     const rows = customers.map((customer)=>(
         {
             id: customer._id,
+            customer: customer,
             fullName:`${customer.first_name} ${customer.last_name}`,
             email: customer.email,
             phone_number: customer.phone_number,
@@ -121,94 +146,30 @@ const CustomerTable = ({searchText}) => {
 
     ));
 
-    // const rows = useMemo(()=>{
-
-    //     const search = searchText.toLowerCase()
-
-    //     return customers
-
-    //     .filter(c=>{
-
-    //         const name =
-    //         `${c.first_name} ${c.last_name}`
-    //         .toLowerCase()
-
-
-    //         return (
-
-    //             name.includes(search)
-    //             ||
-    //             c.email?.toLowerCase()
-    //             .includes(search)
-
-    //             ||
-    //             c.phone_number?.includes(search)
-
-    //         )
-
-    //     })
-
-
-    //     .map(c=>({
-
-    //         id:c._id,
-    //         first_name:c.first_name,
-    //         last_name:c.last_name,
-    //         email:c.email,
-    //         phone_number:c.phone_number,
-    //         points:c.points
-
-    //     }))
-
-
-    // },[
-    //     customers,
-    //     searchText
-    // ])
-
-
     return (
+        <>
+            <CustomTable
+                rows={rows}
+                columns={columns}
+                searchText={searchText}
+                searchFields={[
+                    "fullName",
+                    "email",
+                    "phone_number"
+                ]}
+            />
 
-        <CustomTable
-            rows={rows}
-            columns={columns}
-            searchText={searchText}
-            searchFields={[
-                "fullName",
-                "email",
-                "phone_number"
-            ]}
-        />
+            <EditCustomer
+                open={editOpen}
+                customer={selectedCustomer}
+                onClose={() => {
+                    setEditOpen(false);
+                    setSelectedCustomer(null);
+                }}
+            />
+        </>
 
     );
-
-    // return (
-
-    //     <Paper
-    //         sx={{
-    //             height:600
-    //         }}
-    //     >
-
-    //         <DataGrid
-    //             rows={rows}
-    //             columns={columns}
-    //             pageSizeOptions={[5,10,15]}
-    //             initialState={{
-    //                 pagination:{
-    //                     paginationModel:{
-    //                         page:0,
-    //                         pageSize:15
-    //                     }
-    //                 }
-    //             }}
-    //         />
-
-
-    //     </Paper>
-
-    // )
-
 }
 
 
