@@ -83,7 +83,7 @@ const SaleProductsTable = ({ products }) => {
                         max: 100
                     }}
                     sx={{
-                        width: 80
+                        width: 80,
                     }}
                     InputProps={{
                         endAdornment: "%"
