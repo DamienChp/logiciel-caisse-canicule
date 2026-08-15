@@ -1,17 +1,20 @@
 import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
 
 import productRoutes from "./routes/product.route.js";
 import customerRoutes from "./routes/customer.route.js";
 import brandRoutes from "./routes/brand.route.js";
 import saleRoutes from "./routes/sale.route.js"
+import authRoutes from "./routes/auth.route.js"
 
 dotenv.config(); // to use the .env file
 
 const app = express();  // create express app
 const PORT = process.env.PORT || 5001
 
+app.use(cookieParser());
 app.use(express.json()); // allow to accept json data in the body
 
 // routes
@@ -19,6 +22,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/sales", saleRoutes);
+app.use("/api/auth", authRoutes);
 
 
 

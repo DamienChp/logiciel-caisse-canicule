@@ -191,6 +191,7 @@ const SalePage = () => {
 
             {/* ZONE CENTRALE */}
 
+
             <Box
                 sx={{
                     flex: 1,
