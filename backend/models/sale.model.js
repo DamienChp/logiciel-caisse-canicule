@@ -52,6 +52,12 @@ const saleSchema = new mongoose.Schema(
             default: null
         },
 
+        seller: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+
         products: {
             type: [saleProductSchema],
             required: true

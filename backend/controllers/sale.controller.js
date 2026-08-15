@@ -149,6 +149,7 @@ export const createSale = async (req, res) => {
             saleNumber,
 
             customer: customer || null,
+            seller: req.user._id,
             products,
             total: roundedTotal,
             cartDiscount,
@@ -235,6 +236,7 @@ export const getAllSales = async (req, res) => {
             .find()
             .populate("customer")
             .populate("products.product")
+            .populate("seller", "fullName email")
             .sort({ createdAt: -1 });
 
 

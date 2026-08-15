@@ -66,12 +66,8 @@ export const useSaleStore = create((set) => ({
 
             const response = await fetch("/api/sales");
 
-            console.log("RESPONSE :", response);
 
             const data = await response.json();
-
-            console.log("DATA API SALES :", data);
-            console.log("DATA.DATA :", data.data);
 
             if (!response.ok) {
                 throw new Error(
