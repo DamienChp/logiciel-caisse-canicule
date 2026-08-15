@@ -4,7 +4,14 @@ import { Paper } from "@mui/material";
 
 import { DataGrid } from "@mui/x-data-grid";
 
-const CustomTable = ({rows, columns, searchText = "", searchFields = []}) => {
+const CustomTable = ({
+    rows,
+    columns,
+    searchText = "",
+    searchFields = [],
+    onRowClick,
+    height = "90dvh"
+}) => {
 
     const filteredRows = useMemo(()=>{
 
@@ -34,7 +41,7 @@ const CustomTable = ({rows, columns, searchText = "", searchFields = []}) => {
 
         <Paper
             sx={{
-                height:"90dvh",
+                height,
                 width:"100%"
             }}
         >
@@ -57,6 +64,8 @@ const CustomTable = ({rows, columns, searchText = "", searchFields = []}) => {
                     }
                 }}
                 disableRowSelectionOnClick
+                onRowClick={onRowClick}
+                sx={onRowClick ? { "& .MuiDataGrid-row": { cursor: "pointer" } } : undefined}
             />
 
         </Paper>

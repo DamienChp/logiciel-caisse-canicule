@@ -119,7 +119,7 @@ const Sidebar = () => {
                         <BarChart />
                     </ListItemIcon>
                     <ListItemText 
-                        primary="Tableau de bord"
+                        primary="Statistiques"
                         primaryTypographyProps={{
                             color: "#02595A",
                         }}
