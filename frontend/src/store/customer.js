@@ -20,11 +20,17 @@ export const useCustomerStore = create((set) => ({
             });
 
             const data = await res.json();
+
+            if (!res.ok) {
+                return { success: false, message: data.message || 'Erreur lors de la création du client' };
+            }
+
             set((state) => ({
                 customers: [...state.customers, data.data]
             }));
 
-            return { success: true, message: 'Customer created successfully' };
+            // On renvoie le client créé (avec son _id) dans `data`
+            return { success: true, message: 'Customer created successfully', data: data.data };
     },
     getAllCustomers: async () => {
         try {

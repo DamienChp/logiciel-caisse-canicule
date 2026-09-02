@@ -107,7 +107,7 @@ const BarcodeScanner = ({ onScan }) => {
                     qrbox: (viewfinderWidth, viewfinderHeight) => {
 
                         const size = Math.min(
-                            viewfinderWidth * 0.8,
+                            viewfinderWidth * 0.5,
                             viewfinderHeight * 0.5
                         );
 
@@ -127,8 +127,6 @@ const BarcodeScanner = ({ onScan }) => {
                     }
 
                     lastScan.current = decodedText;
-
-                    console.log("Code détecté :", decodedText);
 
                     onScan(decodedText);
 

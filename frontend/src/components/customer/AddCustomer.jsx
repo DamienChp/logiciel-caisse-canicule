@@ -6,13 +6,18 @@ import {
     DialogContent,
     DialogActions,
     TextField,
-    Button
+    Button,
+    Box,
+    Avatar,
+    Alert
 } from '@mui/material'
+
+import { PersonAddAlt } from '@mui/icons-material'
 
 import { useCustomerStore } from '../../store/customer'
 
 
-const AddCustomer = ({open,onClose}) => {
+const AddCustomer = ({ open, onClose, onCreated }) => {
 
     const { createCustomer, getAllCustomers } = useCustomerStore()
 
@@ -24,6 +29,9 @@ const AddCustomer = ({open,onClose}) => {
         city: ""
     })
 
+    const [submitting, setSubmitting] = useState(false)
+    const [error, setError] = useState("")
+
     const handleChange = (e)=>{
 
         setCustomer({
@@ -33,9 +41,7 @@ const AddCustomer = ({open,onClose}) => {
 
     }
 
-    const handleSubmit = async()=>{
-
-        await createCustomer(customer)
+    const resetForm = () => {
 
         setCustomer({
             first_name:"",
@@ -45,73 +51,182 @@ const AddCustomer = ({open,onClose}) => {
             city:""
         })
 
-        getAllCustomers()
+    }
+
+    const handleSubmit = async()=>{
+
+        setSubmitting(true)
+        setError("")
+
+        try {
+
+            const result = await createCustomer(customer)
+
+            if (!result?.success) {
+                setError(result?.message || "Erreur lors de la création du client")
+                return
+            }
+
+            await getAllCustomers()
+
+            resetForm()
+
+            if (onCreated) {
+                onCreated(result.data)
+            }
+
+            onClose()
+
+        } finally {
+
+            setSubmitting(false)
+
+        }
+
+    }
+
+    const handleClose = () => {
+
+        resetForm()
+        setError("")
         onClose()
+
     }
 
     return (
 
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             fullWidth
+            PaperProps={{
+                sx: { borderRadius: 3 }
+            }}
         >
 
-            <DialogTitle>
+            <DialogTitle
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    fontWeight: 600,
+                    borderBottom: "1px solid rgba(0,0,0,0.08)"
+                }}
+            >
+
+                <Avatar
+                    sx={{
+                        bgcolor: "#02595A",
+                        width: 34,
+                        height: 34
+                    }}
+                >
+                    <PersonAddAlt fontSize="small" />
+                </Avatar>
+
                 Ajouter un client
+
             </DialogTitle>
 
-            <DialogContent>
-                <TextField
-                    margin="dense"
-                    label="Prénom"
-                    name="first_name"
-                    fullWidth
-                    value={customer.first_name}
-                    onChange={handleChange}
-                />
+            <DialogContent
+                sx={{
+                    pt: 3,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 0.5
+                }}
+            >
 
-                <TextField
-                    margin="dense"
-                    label="Nom"
-                    name="last_name"
-                    fullWidth
-                    value={customer.last_name}
-                    onChange={handleChange}
-                />
+                {
+                    error &&
+                    <Alert
+                        severity="error"
+                        sx={{ mb: 1 }}
+                    >
+                        {error}
+                    </Alert>
+                }
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        gap: 2,
+                        mt: 1
+                    }}
+                >
+
+                    <TextField
+                        label="Prénom"
+                        name="first_name"
+                        fullWidth
+                        value={customer.first_name}
+                        onChange={handleChange}
+                    />
+
+                    <TextField
+                        label="Nom"
+                        name="last_name"
+                        fullWidth
+                        value={customer.last_name}
+                        onChange={handleChange}
+                    />
+
+                </Box>
 
                 <TextField
                     margin="dense"
                     label="Email"
                     name="email"
+                    type="email"
                     fullWidth
                     value={customer.email}
                     onChange={handleChange}
                 />
 
-                <TextField
-                    margin="dense"
-                    label="Téléphone"
-                    name="phone_number"
-                    fullWidth
-                    value={customer.phone_number}
-                    onChange={handleChange}
-                />
+                <Box
+                    sx={{
+                        display: "flex",
+                        gap: 2
+                    }}
+                >
 
-                <TextField
-                    margin="dense"
-                    label="Ville"
-                    name="city"
-                    fullWidth
-                    value={customer.city}
-                    onChange={handleChange}
-                />
+                    <TextField
+                        margin="dense"
+                        label="Téléphone"
+                        name="phone_number"
+                        fullWidth
+                        value={customer.phone_number}
+                        onChange={handleChange}
+                    />
+
+                    <TextField
+                        margin="dense"
+                        label="Ville"
+                        name="city"
+                        fullWidth
+                        value={customer.city}
+                        onChange={handleChange}
+                    />
+
+                </Box>
+
             </DialogContent>
 
-            <DialogActions>
-                <Button 
-                    variant="contained"
-                    onClick={onClose}
+            <DialogActions
+                sx={{
+                    px: 3,
+                    pb: 2.5,
+                    pt: 1
+                }}
+            >
+                <Button
+                    variant="outlined"
+                    onClick={handleClose}
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 600
+                    }}
                 >
                     Annuler
                 </Button>
@@ -119,8 +234,14 @@ const AddCustomer = ({open,onClose}) => {
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
+                    disabled={submitting || !customer.first_name || !customer.last_name}
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 600
+                    }}
                 >
-                    Ajouter
+                    {submitting ? "Ajout..." : "Ajouter"}
                 </Button>
             </DialogActions>
         </Dialog>

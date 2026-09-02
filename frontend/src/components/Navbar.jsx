@@ -76,7 +76,21 @@ const Navbar = () => {
                     }}
                 >
                     CANICULE
-                </Typography>
+                </Typography> 
+
+                {/* <img
+                    src="/Logo_Meda.svg"
+                    alt="Canicule"
+                    style={{
+                        marginTop: "12px",
+                        marginBottom: "12px",
+                        height: "55px",
+                        width: "auto",
+                        objectFit: "contain",
+                        flexGrow: 1,
+                        objectPosition: "left"
+                    }}
+                /> */}
 
 
                 {authUser && (

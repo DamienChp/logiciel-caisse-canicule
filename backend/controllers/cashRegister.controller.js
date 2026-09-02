@@ -1,4 +1,4 @@
-import CashRegister from "../models/CashRegister.js";
+import CashRegister from "../models/cashRegister.model.js";
 
 export const openCashRegister = async (req, res) => {
     try {

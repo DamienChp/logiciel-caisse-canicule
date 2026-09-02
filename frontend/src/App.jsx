@@ -10,6 +10,7 @@ import BrandProducts from "./pages/stock-page/BrandProducts";
 import CustomerPage from "./pages/customer-page/CustomerPage";
 import StatisticPage from "./pages/statistic/StatisticPage";
 import LoginPage from "./pages/login-page/LoginPage";
+import CashRegisterPage from "./pages/cash-register-page/CashRegisterPage";
 import ProtectedRoute from "./components/login/ProtectedRoute";
 
 import { useAuthStore } from "./store/auth";
@@ -111,6 +112,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<SalePage />} />
                     <Route path="/stock" element={<StockPage />} />
+                    <Route path="/cash-register" element={<CashRegisterPage />} />
                     <Route path="/stock/:brand" element={<BrandProducts />} />
                     <Route path="/customers" element={<CustomerPage />} />
                     <Route path="/statistic" element={<StatisticPage />} />

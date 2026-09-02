@@ -22,15 +22,21 @@ import {
 
 import { useSaleStore } from "../../store/sale.js";
 import { useSalesStatistics, periodLabel, formatEuro } from "../../store/statistic.js";
+import { useRayonStore, useFamilleStore } from "../../store/rayonFamille.js";
+import { useBrandStore } from "../../store/brand.js";
 
 import StatCard from "../../components/statistic/StatCard.jsx";
 import PaymentMethodBar from "../../components/statistic/PaymentMethodBar.jsx";
 import SalesTable from "../../components/statistic/SalesTable.jsx";
-
+import SalesStatisticsTable from "../../components/statistic/SalesStatisticsTable.jsx";
 
 const StatisticPage = () => {
 
     const { sales, getAllSales, loading, error } = useSaleStore();
+    console.log("sales; ", sales);
+    const { rayons, getAllRayons } = useRayonStore();
+    const { familles, getAllFamilles } = useFamilleStore();
+    const { brands, getAllBrands } = useBrandStore();``
 
     const [period, setPeriod] = useState("today");
 
@@ -38,6 +44,9 @@ const StatisticPage = () => {
     useEffect(() => {
 
         getAllSales();
+        getAllRayons();
+        getAllFamilles();
+        getAllBrands();
 
     }, []);
 
@@ -283,6 +292,37 @@ const StatisticPage = () => {
 
                         <SalesTable 
                             sales={filteredSales} 
+                        />
+
+                    </Paper>
+
+                    {/* STATISTIQUES */}
+
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            mt: 3,
+                            borderRadius: 3,
+                            border: "1px solid",
+                            borderColor: "divider"
+                        }}
+                    >
+
+                        <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", mb: 2 }}
+                        >
+                            Statistiques
+                        </Typography>
+
+                        <Divider sx={{ mb: 2 }} />
+
+                        <SalesStatisticsTable
+                            sales={filteredSales}
+                            brands={brands}
+                            rayons={rayons}
+                            families={familles}
                         />
 
                     </Paper>

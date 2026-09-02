@@ -11,7 +11,8 @@ import {
     PointOfSale, 
     Inventory, 
     Group, 
-    BarChart
+    BarChart,
+    LocalGroceryStore
 } from '@mui/icons-material'
 
 import { NavLink } from 'react-router-dom'
@@ -44,10 +45,34 @@ const Sidebar = () => {
                     }}
                 >
                     <ListItemIcon sx={{ color: "#02595A"}}>
-                        <PointOfSale />
+                        <LocalGroceryStore />
                     </ListItemIcon>
                     <ListItemText
                         primary="Vente"
+                        primaryTypographyProps={{
+                            color: "#02595A",
+                        }}
+                    />                
+                </ListItemButton>
+            </ListItem>
+
+            {/* CAUISSE */}
+
+            <ListItem disablePadding>
+                <ListItemButton 
+                    component={NavLink} 
+                    to="/cash-register"
+                    sx={{
+                        '&.active': {
+                            backgroundColor: '#F7ECCB',
+                        },
+                    }}
+                >
+                    <ListItemIcon sx={{ color: "#02595A"}}>
+                        <PointOfSale />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary="Caisse"
                         primaryTypographyProps={{
                             color: "#02595A",
                         }}

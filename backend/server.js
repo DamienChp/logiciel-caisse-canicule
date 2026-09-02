@@ -9,6 +9,8 @@ import brandRoutes from "./routes/brand.route.js";
 import saleRoutes from "./routes/sale.route.js";
 import authRoutes from "./routes/auth.route.js";
 import cashRegisterRoutes from "./routes/cashRegister.route.js";
+import rayonRoutes from "./routes/rayon.route.js"
+import familleRoutes from "./routes/famille.route.js"
 
 dotenv.config(); // to use the .env file
 
@@ -22,6 +24,8 @@ app.use(express.json()); // allow to accept json data in the body
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/brands", brandRoutes);
+app.use("/api/rayons", rayonRoutes);
+app.use("/api/familles", familleRoutes);
 app.use("/api/sales", saleRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cash-register", cashRegisterRoutes);

@@ -17,55 +17,104 @@ import BarcodeScanner from '../../components/BarcodeScanner.jsx';
 import { useProductStore } from "../../store/product.js"
 import { useCartStore } from '../../store/cart.js';
 
+
 const SalePage = () => {
 
-    // const [open, setOpen] = useState(false)
+    // ======================================================
+    // PRODUITS
+    // ======================================================
 
     const {
         products,
         getAllProducts
     } = useProductStore();
 
+
+    // ======================================================
+    // CART STORE
+    // ======================================================
+
     const {
-        client,
-        cart,
+        carts,
+        activeCartId,
+        setActiveCart,
+
+        getActiveCart,
+
         setClient,
         addProduct,
-        cartDiscount,
+
         setCartDiscount,
-        // getSubtotal,
+
         getProductsTotal,
         getTotal
     } = useCartStore();
+
+
+    // ======================================================
+    // VENTE ACTIVE
+    // ======================================================
+
+    const activeCart = getActiveCart();
+
+    const client = activeCart?.client || null;
+    const cart = activeCart?.cart || [];
+    const cartDiscount = activeCart?.cartDiscount || 0;
+
+
+    // ======================================================
+    // PRODUITS
+    // ======================================================
 
     useEffect(() => {
         getAllProducts();
     }, [getAllProducts]);
 
-    // const subtotal = getSubtotal();
+
+    // ======================================================
+    // TOTALS
+    // ======================================================
+
     const productsTotal = getProductsTotal();
     const total = getTotal();
 
-    const handleScan = useCallback(async (barcode) => {
 
-        const product = products.find(
-            (p) =>
-                String(p.barcode).trim() ===
-                String(barcode).trim()
-        );
+    // ======================================================
+    // SCAN BARCODE
+    // ======================================================
 
-        if (!product) {
-            alert("Produit introuvable");
-            return;
-        }
+    const handleScan = useCallback(
+        async (barcode) => {
 
-        addProduct(product);
+            const product = products.find(
+                (p) =>
+                    String(p.barcode).trim() ===
+                    String(barcode).trim()
+            );
 
-    }, [products, addProduct]);
+            if (!product) {
+                alert("Produit introuvable");
+                return;
+            }
 
-    const handleProductSelect = useCallback((product) => {
-        addProduct(product);
-    }, [addProduct]);
+            addProduct(product);
+
+        },
+        [products, addProduct]
+    );
+
+
+    // ======================================================
+    // SELECTEUR PRODUIT
+    // ======================================================
+
+    const handleProductSelect = useCallback(
+        (product) => {
+            addProduct(product);
+        },
+        [addProduct]
+    );
+
 
     return (
 
@@ -81,7 +130,48 @@ const SalePage = () => {
             }}
         >
 
+            {/* ================================================= */}
+            {/* SELECTEUR DES VENTES */}
+            {/* ================================================= */}
+
+            <Paper
+                elevation={2}
+                sx={{
+                    p: 1,
+                    borderRadius: 2,
+                    display: "flex",
+                    gap: 1
+                }}
+            >
+
+                {carts.map((sale, index) => (
+
+                    <Button
+                        key={sale.id}
+                        variant={
+                            sale.id === activeCartId
+                                ? "contained"
+                                : "outlined"
+                        }
+                        onClick={() =>
+                            setActiveCart(sale.id)
+                        }
+                        sx={{
+                            flex: 1,
+                            height: 45
+                        }}
+                    >
+                        Vente {index + 1}
+                    </Button>
+
+                ))}
+
+            </Paper>
+
+
+            {/* ================================================= */}
             {/* HEADER CLIENT + TOTAL */}
+            {/* ================================================= */}
 
             <Paper
                 elevation={2}
@@ -99,6 +189,7 @@ const SalePage = () => {
                     setClient={setClient}
                 />
 
+
                 <Box
                     sx={{
                         display: "flex",
@@ -111,18 +202,11 @@ const SalePage = () => {
 
                     <Box
                         sx={{
-                            textAlign: "right",
-                            // display: "flex",
-                            // alignItems: "center",
-                            // gap: 1
+                            textAlign: "right"
                         }}
                     >
 
-                        <Typography
-                            sx={{
-                                mb:1
-                            }}
-                        >
+                        <Typography sx={{ mb: 1 }}>
                             Remise panier
                         </Typography>
 
@@ -131,7 +215,9 @@ const SalePage = () => {
                             size="small"
                             value={cartDiscount}
                             onChange={(e) =>
-                                setCartDiscount(e.target.value)
+                                setCartDiscount(
+                                    e.target.value
+                                )
                             }
                             inputProps={{
                                 min: 0,
@@ -163,17 +249,22 @@ const SalePage = () => {
                             Total vente
                         </Typography>
 
+
                         {cartDiscount > 0 && (
+
                             <Typography
                                 variant="body2"
                                 color="text.secondary"
                                 sx={{
-                                    textDecoration: "line-through"
+                                    textDecoration:
+                                        "line-through"
                                 }}
                             >
                                 {productsTotal.toFixed(2)} €
                             </Typography>
+
                         )}
+
 
                         <Typography
                             variant="h4"
@@ -189,8 +280,9 @@ const SalePage = () => {
             </Paper>
 
 
+            {/* ================================================= */}
             {/* ZONE CENTRALE */}
-
+            {/* ================================================= */}
 
             <Box
                 sx={{
@@ -201,9 +293,12 @@ const SalePage = () => {
                 }}
             >
 
+                {/* ================================================= */}
                 {/* CAMERA */}
+                {/* ================================================= */}
 
                 <Paper
+                    elevation={2}
                     sx={{
                         flex: 1,
                         p: 2,
@@ -221,6 +316,7 @@ const SalePage = () => {
                         Scanner
                     </Typography>
 
+
                     <Box
                         sx={{
                             flex: 1,
@@ -237,9 +333,12 @@ const SalePage = () => {
                 </Paper>
 
 
+                {/* ================================================= */}
                 {/* TABLEAU */}
+                {/* ================================================= */}
 
                 <Paper
+                    elevation={2}
                     sx={{
                         flex: 1,
                         p: 2,
@@ -249,24 +348,27 @@ const SalePage = () => {
                         overflow: "hidden"
                     }}
                 >
+
                     <Box
                         pb={2}
                         sx={{
                             display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            justifyContent:
+                                "space-between",
+                            alignItems: "center"
                         }}
                     >
-                        <Typography
-                            variant="h6"
-                        >
+
+                        <Typography variant="h6">
                             Produits
                         </Typography>
+
 
                         <ProductSelector
                             products={products}
                             onSelect={handleProductSelect}
                         />
+
                     </Box>
 
 
@@ -289,7 +391,9 @@ const SalePage = () => {
             </Box>
 
 
+            {/* ================================================= */}
             {/* FOOTER PAIEMENT */}
+            {/* ================================================= */}
 
             <Paper
                 elevation={2}
