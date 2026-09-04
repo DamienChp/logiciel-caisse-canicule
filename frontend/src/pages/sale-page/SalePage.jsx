@@ -97,6 +97,8 @@ const SalePage = () => {
                 return;
             }
 
+                        console.log("products :::", product),
+
             addProduct(product);
 
         },
@@ -120,13 +122,20 @@ const SalePage = () => {
 
         <Box
             sx={{
-                flex: 8,
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                minHeight: 0,
+                boxSizing: "border-box",
+
                 p: 2,
-                height: "80dvh",
+
                 overflow: "hidden",
+
                 display: "flex",
                 flexDirection: "column",
-                gap: 2
+
+                gap: 1.5
             }}
         >
 
@@ -158,7 +167,7 @@ const SalePage = () => {
                         }
                         sx={{
                             flex: 1,
-                            height: 45
+                            height: 25
                         }}
                     >
                         Vente {index + 1}

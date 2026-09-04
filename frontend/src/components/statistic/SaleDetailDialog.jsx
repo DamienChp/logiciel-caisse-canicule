@@ -53,7 +53,9 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
             `${customer.first_name || ""} ${customer.last_name || ""}`.trim())
         : null;
 
-
+    
+    
+        console.log("sale : ", sale.product);
     return (
 
         <Dialog
@@ -161,14 +163,16 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
 
                             const name =
                                 item.name ||
-                                item.product?.name ||
+                                item.product?.articleCode ||
                                 "Produit";
 
                             const unitPrice = Number(
-                                item.price ?? item.product?.price ?? 0
+                                item.priceTTC ?? item.product?.priceTTC ?? 0
                             );
 
                             const quantity = Number(item.quantity || 0);
+
+                            console.log("name", name, unitPrice, quantity);
 
                             return (
 

@@ -63,7 +63,7 @@ const Navbar = () => {
 
             <Toolbar>
 
-                <Typography
+                {/* <Typography
                     variant="h3"
                     noWrap
                     component="div"
@@ -76,21 +76,21 @@ const Navbar = () => {
                     }}
                 >
                     CANICULE
-                </Typography> 
+                </Typography>  */}
 
-                {/* <img
-                    src="/Logo_Meda.svg"
+                <img
+                    src="/Logo_Principal.svg"
                     alt="Canicule"
                     style={{
-                        marginTop: "12px",
-                        marginBottom: "12px",
-                        height: "55px",
+                        // marginTop: "12px",
+                        // marginBottom: "12px",
+                        height: "85px",
                         width: "auto",
                         objectFit: "contain",
                         flexGrow: 1,
                         objectPosition: "left"
                     }}
-                /> */}
+                />
 
 
                 {authUser && (
