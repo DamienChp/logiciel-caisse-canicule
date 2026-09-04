@@ -33,7 +33,6 @@ import SalesStatisticsTable from "../../components/statistic/SalesStatisticsTabl
 const StatisticPage = () => {
 
     const { sales, getAllSales, loading, error } = useSaleStore();
-    console.log("sales; ", sales);
     const { rayons, getAllRayons } = useRayonStore();
     const { familles, getAllFamilles } = useFamilleStore();
     const { brands, getAllBrands } = useBrandStore();``

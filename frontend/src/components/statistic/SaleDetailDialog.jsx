@@ -54,8 +54,6 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
         : null;
 
     
-    
-        console.log("sale : ", sale.product);
     return (
 
         <Dialog
@@ -171,8 +169,6 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
                             );
 
                             const quantity = Number(item.quantity || 0);
-
-                            console.log("name", name, unitPrice, quantity);
 
                             return (
 

@@ -85,8 +85,6 @@ const AddProduct = ({ open, onClose, brand }) => {
 
     const handleSubmit = async () => {
 
-        console.log("Produit envoyé :", product);
-
         const result = await createProduct(product);
 
         if (!result.success) {

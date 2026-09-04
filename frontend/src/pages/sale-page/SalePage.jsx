@@ -5,7 +5,9 @@ import {
     Paper,
     Typography,
     TextField,
-    Button
+    Button,
+    ToggleButton,
+    ToggleButtonGroup
 } from '@mui/material'
 
 import ClientSelector from '../../components/sale/ClientSelector.jsx';
@@ -45,11 +47,11 @@ const SalePage = () => {
         addProduct,
 
         setCartDiscount,
+        setCartDiscountType,
 
         getProductsTotal,
         getTotal
     } = useCartStore();
-
 
     // ======================================================
     // VENTE ACTIVE
@@ -60,6 +62,7 @@ const SalePage = () => {
     const client = activeCart?.client || null;
     const cart = activeCart?.cart || [];
     const cartDiscount = activeCart?.cartDiscount || 0;
+    const cartDiscountType = activeCart?.cartDiscountType || "percent";
 
 
     // ======================================================
@@ -96,8 +99,6 @@ const SalePage = () => {
                 alert("Produit introuvable");
                 return;
             }
-
-                        console.log("products :::", product),
 
             addProduct(product);
 
@@ -219,26 +220,59 @@ const SalePage = () => {
                             Remise panier
                         </Typography>
 
-                        <TextField
-                            type="number"
-                            size="small"
-                            value={cartDiscount}
-                            onChange={(e) =>
-                                setCartDiscount(
-                                    e.target.value
-                                )
-                            }
-                            inputProps={{
-                                min: 0,
-                                max: 100
-                            }}
+                        <Box
                             sx={{
-                                width: 100
+                                display: "flex",
+                                gap: 1,
+                                justifyContent: "flex-end"
                             }}
-                            InputProps={{
-                                endAdornment: "%"
-                            }}
-                        />
+                        >
+
+                            <TextField
+                                type="number"
+                                size="small"
+                                value={cartDiscount}
+                                onChange={(e) =>
+                                    setCartDiscount(
+                                        e.target.value
+                                    )
+                                }
+                                inputProps={{
+                                    min: 0,
+                                    ...(cartDiscountType === "percent"
+                                        ? { max: 100 }
+                                        : {})
+                                }}
+                                sx={{
+                                    width: 100
+                                }}
+                                InputProps={{
+                                    endAdornment:
+                                        cartDiscountType === "percent"
+                                            ? "%"
+                                            : "€"
+                                }}
+                            />
+
+                            <ToggleButtonGroup
+                                value={cartDiscountType}
+                                exclusive
+                                size="small"
+                                onChange={(e, newType) => {
+                                    if (newType !== null) {
+                                        setCartDiscountType(newType);
+                                    }
+                                }}
+                            >
+                                <ToggleButton value="percent">
+                                    %
+                                </ToggleButton>
+                                <ToggleButton value="amount">
+                                    €
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+
+                        </Box>
 
                     </Box>
 

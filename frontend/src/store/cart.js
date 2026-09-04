@@ -5,7 +5,8 @@ const createCart = (id) => ({
     id,
     client: null,
     cart: [],
-    cartDiscount: 0
+    cartDiscount: 0,
+    cartDiscountType: "percent" // "percent" ou "amount"
 });
 
 export const useCartStore = create(
@@ -122,6 +123,41 @@ export const useCartStore = create(
 
 
             // ======================================================
+            // OFFERT (boolean) : remise à 100% ou restauration
+            // ======================================================
+
+            toggleGift: (id, size) =>
+                set((state) => ({
+                    carts: state.carts.map((cart) =>
+                        cart.id === state.activeCartId
+                            ? {
+                                ...cart,
+                                cart: cart.cart.map((product) => {
+                                    if (
+                                        product._id !== id ||
+                                        product.size !== size
+                                    ) {
+                                        return product;
+                                    }
+
+                                    const isGift = product.discount === 100;
+
+                                    return {
+                                        ...product,
+                                        discount: isGift
+                                            ? (product.previousDiscount || 0)
+                                            : 100,
+                                        previousDiscount: isGift
+                                            ? product.previousDiscount
+                                            : product.discount
+                                    };
+                                })
+                            }
+                            : cart
+                    )
+                })),
+
+            // ======================================================
             // SUPPRIMER UN PRODUIT
             // ======================================================
 
@@ -140,24 +176,25 @@ export const useCartStore = create(
                     )
                 })),
 
-
             // ======================================================
-            // REMISE SUR UN ARTICLE
+            // MODIFIER LA QUANTITÉ D'UN PRODUIT
             // ======================================================
 
-            setProductDiscount: (id, discount) =>
+            setProductQuantity: (id, size, quantity) =>
                 set((state) => ({
                     carts: state.carts.map((cart) =>
                         cart.id === state.activeCartId
                             ? {
                                 ...cart,
-
                                 cart: cart.cart.map((product) =>
-                                    product._id === id
+                                    product._id === id &&
+                                    product.size === size
                                         ? {
                                             ...product,
-                                            discount:
-                                                Number(discount) || 0
+                                            quantity: Math.max(
+                                                1,
+                                                Number(quantity) || 1
+                                            )
                                         }
                                         : product
                                 )
@@ -168,21 +205,90 @@ export const useCartStore = create(
 
 
             // ======================================================
-            // REMISE SUR LE PANIER
+            // REMISE SUR UN ARTICLE
             // ======================================================
 
-            setCartDiscount: (discount) =>
+            setProductDiscount: (id, size, discount) =>
                 set((state) => ({
                     carts: state.carts.map((cart) =>
                         cart.id === state.activeCartId
                             ? {
                                 ...cart,
-                                cartDiscount:
-                                    Number(discount) || 0
+
+                                cart: cart.cart.map((product) =>
+                                    product._id === id &&
+                                    product.size === size
+                                        ? {
+                                            ...product,
+                                            discount: Math.min(
+                                                100,
+                                                Math.max(
+                                                    0,
+                                                    Number(discount) || 0
+                                                )
+                                            )
+                                        }
+                                        : product
+                                )
                             }
                             : cart
                     )
                 })),
+
+
+                // ======================================================
+                // REMISE SUR LE PANIER (montant)
+                // ======================================================
+
+                setCartDiscount: (discount) =>
+                    set((state) => ({
+                        carts: state.carts.map((cart) => {
+
+                            if (cart.id !== state.activeCartId) {
+                                return cart;
+                            }
+
+                            const value = Math.max(0, Number(discount) || 0);
+
+                            // Si c'est un pourcentage, on plafonne à 100
+                            const finalValue =
+                                cart.cartDiscountType === "percent"
+                                    ? Math.min(100, value)
+                                    : value;
+
+                            return {
+                                ...cart,
+                                cartDiscount: finalValue
+                            };
+                        })
+                    })),
+
+
+        // ======================================================
+        // TYPE DE REMISE PANIER (% ou €)
+        // ======================================================
+
+        setCartDiscountType: (type) =>
+            set((state) => ({
+                carts: state.carts.map((cart) => {
+
+                    if (cart.id !== state.activeCartId) {
+                        return cart;
+                    }
+
+                    // Si on repasse en %, on replafonne la valeur existante à 100
+                    const clampedDiscount =
+                        type === "percent"
+                            ? Math.min(100, cart.cartDiscount)
+                            : cart.cartDiscount;
+
+                    return {
+                        ...cart,
+                        cartDiscountType: type,
+                        cartDiscount: clampedDiscount
+                    };
+                })
+            })),
 
 
             // ======================================================
@@ -248,18 +354,15 @@ export const useCartStore = create(
 
                 if (!activeCart) return 0;
 
-                const productsTotal =
-                    get().getProductsTotal();
+                const productsTotal = get().getProductsTotal();
 
-                const cartDiscount =
-                    productsTotal *
-                    (activeCart.cartDiscount || 0) /
-                    100;
+                const discountAmount =
+                    activeCart.cartDiscountType === "percent"
+                        ? productsTotal * (activeCart.cartDiscount || 0) / 100
+                        : (activeCart.cartDiscount || 0);
 
-                return (
-                    productsTotal -
-                    cartDiscount
-                );
+                // On empêche un total négatif si la remise en € dépasse le total
+                return Math.max(0, productsTotal - discountAmount);
             },
 
 

@@ -34,15 +34,7 @@ const parseFrenchNumber = (value) => {
 
 export const analyzeImport = async (req, res) => {
 
-    console.log("========== ANALYZE IMPORT ==========");
-
     try {
-
-        console.log(
-            "Fichier reçu :",
-            !!req.file
-        );
-
 
         if (!req.file) {
 
@@ -52,18 +44,6 @@ export const analyzeImport = async (req, res) => {
             });
 
         }
-
-
-        console.log(
-            "Nom fichier :",
-            req.file.originalname
-        );
-
-
-        console.log(
-            "Taille :",
-            req.file.size
-        );
 
 
         // ==========================================
@@ -93,12 +73,6 @@ export const analyzeImport = async (req, res) => {
                     defval: null
                 }
             );
-
-
-        console.log(
-            "Nombre de lignes :",
-            rows.length
-        );
 
 
         // ==========================================
@@ -244,27 +218,6 @@ export const analyzeImport = async (req, res) => {
             }
 
         }
-
-
-        // ==========================================
-        // LOGS
-        // ==========================================
-
-        console.log(
-            "Rayons détectés :",
-            rayons
-        );
-
-
-        console.log(
-            "Familles détectées :",
-            familles
-        );
-
-
-        console.log(
-            "========== ANALYZE OK ==========");
-
 
         // ==========================================
         // REPONSE

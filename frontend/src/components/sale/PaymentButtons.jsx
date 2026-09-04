@@ -82,9 +82,6 @@ const PaymentButtons = () => {
         // On mémorise le moyen de paiement
         setSelectedPayment(paymentMethod);
 
-        console.log("client : ", client);
-        console.log("cart : ", cart);
-
         // AVEC CLIENT
         if (client) {
             setReceiptDialogOpen(true);
