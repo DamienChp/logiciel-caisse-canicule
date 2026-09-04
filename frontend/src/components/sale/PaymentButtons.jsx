@@ -19,9 +19,13 @@ import { useSaleStore } from "../../store/sale";
 
 const PaymentButtons = () => {
 
-    const cart = useCartStore(
-        (state) => state.cart
-    );
+    const cart = useCartStore((state) => {
+        const activeCart = state.carts.find(
+            (cart) => cart.id === state.activeCartId
+        );
+
+        return activeCart?.cart ?? [];
+    });
 
     const client = useCartStore(
         (state) => state.client
