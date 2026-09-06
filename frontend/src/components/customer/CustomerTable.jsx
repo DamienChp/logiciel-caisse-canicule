@@ -134,7 +134,7 @@ const CustomerTable = ({searchText}) => {
 
     const rows = customers.map((customer)=>(
         {
-            id: customer._id,
+            id: customer.id,
             customer: customer,
             fullName:`${customer.first_name} ${customer.last_name}`,
             email: customer.email,
