@@ -44,7 +44,7 @@ const AddProduct = ({ open, onClose, brand }) => {
         if (brand) {
             setProduct((prev) => ({
                 ...prev,
-                brand: brand._id
+                brand: brand.id
             }));
         }
     }, [brand]);
@@ -101,7 +101,7 @@ const AddProduct = ({ open, onClose, brand }) => {
 
         setProduct({
             name: "",
-            brand: brand?._id || "",
+            brand: brand?.id || "",
             category: "",
             gender: "",
             priceHT: "",

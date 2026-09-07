@@ -35,7 +35,7 @@ const BrandProducts = () => {
     const { brand } = useParams();
 
 
-    const currentBrand = brands.find((item) => item._id === brand);
+    const currentBrand = brands.find((item) => item.id === brand);
 
     const [ open, setOpen ] = useState(false);
 

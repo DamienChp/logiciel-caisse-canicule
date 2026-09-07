@@ -37,7 +37,7 @@ const BrandCard = ({ brand }) => {
 
         if (!confirmDelete) return;
 
-        const result = await deleteBrand(brand._id);
+        const result = await deleteBrand(brand.id);
 
         if (!result.success) {
             console.error(result.message);
@@ -68,7 +68,7 @@ const BrandCard = ({ brand }) => {
             >
                 <CardActionArea
                     component={Link}
-                    to={`/stock/${brand._id}`}
+                    to={`/stock/${brand.id}`}
                 >
 
                     <CardMedia

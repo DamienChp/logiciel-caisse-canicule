@@ -72,7 +72,8 @@ const SalePage = () => {
     const cartDiscount = activeCart?.cartDiscount || 0;
     const cartDiscountType = activeCart?.cartDiscountType || "percent";
 
-
+    console.log(client);
+    console.log(cart);
     // ======================================================
     // PRODUITS
     // ======================================================

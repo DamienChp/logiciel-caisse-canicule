@@ -9,24 +9,23 @@ export const useCashRegisterStore = create((set) => ({
         set({ cashRegister }),
 
     openCashRegister: async (openingCash) => {
-
         set({
             loading: true,
-            error: null
+            error: null,
         });
 
         try {
-
             const response = await fetch(
-                "/api/cash-register/open",
+                "/api/cash-registers/open",
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
+                    credentials: "include",
                     body: JSON.stringify({
-                        openingCash
-                    })
+                        opening_cash: openingCash,
+                    }),
                 }
             );
 
@@ -35,25 +34,24 @@ export const useCashRegisterStore = create((set) => ({
             if (!response.ok) {
                 throw new Error(
                     data.message ||
-                    "Erreur lors de l'ouverture"
+                    "Erreur lors de l'ouverture de la caisse."
                 );
             }
 
             set({
                 cashRegister: data,
-                loading: false
+                loading: false,
             });
 
             return data;
 
         } catch (error) {
-
             set({
                 error: error.message,
-                loading: false
+                loading: false,
             });
 
             throw error;
         }
-    }
+    },
 }));

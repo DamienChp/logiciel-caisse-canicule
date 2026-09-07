@@ -1,119 +1,190 @@
 import { create } from "zustand";
 
-// Adapte cette base URL à ton backend
 const API_URL = "/api/auth";
 
+const getCsrfToken = async () => {
+    const response = await fetch(
+        `${API_URL}/csrf`,
+        {
+            credentials: "include"
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            "Impossible de récupérer le token CSRF."
+        );
+    }
+
+    const data = await response.json();
+
+    return data.csrfToken;
+};
 
 export const useAuthStore = create((set) => ({
-
     authUser: null,
 
     isCheckingAuth: true,
     isLoggingIn: false,
 
-
     // ==================================================
-    // VÉRIFIE LA SESSION AU CHARGEMENT DE L'APP
+    // CHECK AUTH
     // ==================================================
 
     checkAuth: async () => {
-
         try {
-
-            const response = await fetch("/api/auth/check", {
-                credentials: "include"
-            });
+            const response = await fetch(
+                `${API_URL}/check`,
+                {
+                    credentials: "include"
+                }
+            );
 
             if (!response.ok) {
-
-                set({ authUser: null, isCheckingAuth: false });
+                set({
+                    authUser: null,
+                    isCheckingAuth: false
+                });
                 return;
-
             }
 
             const data = await response.json();
 
-            set({ authUser: data, isCheckingAuth: false });
+            set({
+                authUser: data,
+                isCheckingAuth: false
+            });
 
         } catch (error) {
+            console.error(
+                "Erreur checkAuth :",
+                error
+            );
 
-            console.error("Erreur checkAuth :", error);
-
-            set({ authUser: null, isCheckingAuth: false });
-
+            set({
+                authUser: null,
+                isCheckingAuth: false
+            });
         }
-
     },
 
-
     // ==================================================
-    // CONNEXION
+    // LOGIN
     // ==================================================
 
     login: async (credentials) => {
-
-        set({ isLoggingIn: true });
+        set({
+            isLoggingIn: true
+        });
 
         try {
+            const csrfToken = await getCsrfToken();
 
-            const response = await fetch("/api/auth/login", {
+            const response = await fetch(
+                `${API_URL}/login`,
+                {
+                    method: "POST",
 
-                method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    credentials: "include",
 
-                credentials: "include",
-
-                body: JSON.stringify(credentials)
-
-            });
+                    body: JSON.stringify(credentials)
+                }
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-
-                throw new Error(data.message || "Échec de la connexion.");
-
+                throw new Error(
+                    data.message ||
+                    data.detail ||
+                    "Échec de la connexion."
+                );
             }
 
-            set({ authUser: data, isLoggingIn: false });
+            const user =
+                data.user ??
+                data.data ??
+                data;
 
-            return { success: true };
+            set({
+                authUser: user,
+                isLoggingIn: false
+            });
+
+            return {
+                success: true,
+                user
+            };
 
         } catch (error) {
+            set({
+                isLoggingIn: false
+            });
 
-            set({ isLoggingIn: false });
-
-            return { success: false, message: error.message };
-
+            return {
+                success: false,
+                message: error.message
+            };
         }
-
     },
 
-
     // ==================================================
-    // DÉCONNEXION
+    // LOGOUT
     // ==================================================
 
     logout: async () => {
-
         try {
+            const csrfToken = await getCsrfToken();
 
-            await fetch("/api/auth/logout", {
-                method: "POST",
-                credentials: "include"
+            const response = await fetch(
+                `${API_URL}/logout`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    },
+
+                    credentials: "include"
+                }
+            );
+
+            if (!response.ok) {
+                const data = await response.json();
+
+                return {
+                    success: false,
+                    message:
+                        data.message ||
+                        data.detail ||
+                        "Erreur lors de la déconnexion"
+                };
+            }
+
+            set({
+                authUser: null
             });
 
-            set({ authUser: null });
+            return {
+                success: true
+            };
 
         } catch (error) {
+            console.error(
+                "Erreur logout :",
+                error
+            );
 
-            console.error("Erreur logout :", error);
-
+            return {
+                success: false,
+                message:
+                    "Impossible de se déconnecter."
+            };
         }
-
     }
-
 }));

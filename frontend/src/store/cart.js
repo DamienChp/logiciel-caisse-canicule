@@ -55,7 +55,7 @@ export const useCartStore = create(
             // CLIENT
             // ======================================================
 
-            setClient: (client) =>
+            setClient: (client) => 
                 set((state) => ({
                     carts: state.carts.map((cart) =>
                         cart.id === state.activeCartId
@@ -82,7 +82,7 @@ export const useCartStore = create(
 
                         const existingProduct = cart.cart.find(
                             (item) =>
-                                item._id === product._id &&
+                                item.id === product.id &&
                                 item.size === product.size
                         );
 
@@ -93,7 +93,7 @@ export const useCartStore = create(
                                 ...cart,
 
                                 cart: cart.cart.map((item) =>
-                                    item._id === product._id &&
+                                    item.id === product.id &&
                                     item.size === product.size
                                         ? {
                                             ...item,
@@ -169,7 +169,7 @@ export const useCartStore = create(
                                 ...cart,
                                 cart: cart.cart.filter(
                                     (product) =>
-                                        product._id !== id
+                                        product.id !== id
                                 )
                             }
                             : cart
@@ -187,7 +187,7 @@ export const useCartStore = create(
                             ? {
                                 ...cart,
                                 cart: cart.cart.map((product) =>
-                                    product._id === id &&
+                                    product.id === id
                                     product.size === size
                                         ? {
                                             ...product,
@@ -304,7 +304,7 @@ export const useCartStore = create(
                 return activeCart.cart.reduce(
                     (total, product) =>
                         total +
-                        product.priceTTC *
+                        product.price_ttc *
                         product.quantity,
                     0
                 );
@@ -325,7 +325,7 @@ export const useCartStore = create(
                     (total, product) => {
 
                         const productTotal =
-                            product.priceTTC *
+                            product.price_ttc *
                             product.quantity;
 
                         const discount =

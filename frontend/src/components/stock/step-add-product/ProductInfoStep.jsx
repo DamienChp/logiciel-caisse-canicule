@@ -87,7 +87,7 @@ const ProductInfoStep = ({ product, brand, onChange }) => {
                     label="Prix HT"
                     name="priceHT"
                     type="number"
-                    value={product.priceHT}
+                    value={product.price_ht}
                     onChange={onChange}
                     fullWidth
                 />
@@ -96,7 +96,7 @@ const ProductInfoStep = ({ product, brand, onChange }) => {
                     label="Prix TTC"
                     name="priceTTC"
                     type="number"
-                    value={product.priceTTC}
+                    value={product.price_ttc}
                     onChange={onChange}
                     fullWidth
                 />

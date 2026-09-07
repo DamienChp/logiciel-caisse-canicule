@@ -28,6 +28,7 @@ const Navbar = () => {
 
     const menuOpen = Boolean(anchorEl);
 
+    console.log(authUser)
 
     // ==================================================
     // MENU COMPTE
@@ -101,7 +102,7 @@ const Navbar = () => {
                             display: { xs: "none", sm: "block" }
                         }}
                     >
-                        {authUser.fullName}
+                        {authUser.full_name}
                     </Typography>
 
                 )}

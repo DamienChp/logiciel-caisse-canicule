@@ -4,16 +4,28 @@ export const useProductStore = create((set) => ({
 
     products: [],
 
-    setProducts: (products) =>
-        set({ products }),
+    // ==========================================
+    // SET PRODUCTS
+    // ==========================================
 
+    setProducts: (products) =>
+        set({
+            products: Array.isArray(products)
+                ? products
+                : []
+        }),
+
+
+    // ==========================================
+    // CREER UN PRODUIT
+    // ==========================================
 
     createProduct: async (newProduct) => {
 
         if (
             !newProduct.name ||
-            !newProduct.priceHT ||
-            !newProduct.priceTTC
+            newProduct.price_ht === undefined ||
+            newProduct.price_ttc === undefined
         ) {
             return {
                 success: false,
@@ -21,27 +33,65 @@ export const useProductStore = create((set) => ({
             };
         }
 
-        const res = await fetch("/api/products", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newProduct)
-        });
+        try {
 
-        const data = await res.json();
+            const res = await fetch(
+                "/api/products",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newProduct)
+                }
+            );
 
-        set((state) => ({
-            products: [
-                ...state.products,
-                data.data
-            ]
-        }));
+            const data = await res.json();
 
-        return {
-            success: true,
-            message: "Product created successfully"
-        };
+            if (!res.ok) {
+
+                return {
+                    success: false,
+                    message:
+                        data.message ||
+                        data.detail ||
+                        "Erreur lors de la création du produit"
+                };
+
+            }
+
+            // DRF peut renvoyer directement le produit
+            // ou { data: produit }
+            const product =
+                data.data ?? data;
+
+            set((state) => ({
+                products: [
+                    ...state.products,
+                    product
+                ]
+            }));
+
+            return {
+                success: true,
+                message:
+                    "Product created successfully",
+                data: product
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Erreur création produit :",
+                error
+            );
+
+            return {
+                success: false,
+                message:
+                    "Erreur lors de la création du produit"
+            };
+        }
     },
 
 
@@ -58,38 +108,60 @@ export const useProductStore = create((set) => ({
             };
         }
 
-        const formData = new FormData();
+        try {
 
-        formData.append(
-            "file",
-            file
-        );
+            const formData = new FormData();
 
-        const res = await fetch(
-            "/api/products/import/analyze",
-            {
-                method: "POST",
-                body: formData
+            formData.append(
+                "file",
+                file
+            );
+
+            const res = await fetch(
+                "/api/products/import/analyze/",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+
+                return {
+                    success: false,
+                    message:
+                        data.message ||
+                        data.detail ||
+                        "Erreur lors de l'analyse du fichier"
+                };
+
             }
-        );
 
-        const data = await res.json();
+            return {
+                success: true,
+                rayons:
+                    data.rayons ?? [],
+                familles:
+                    data.familles ?? []
+            };
 
-        if (!res.ok) {
+        } catch (error) {
+
+            console.error(
+                "Erreur analyse import :",
+                error
+            );
+
             return {
                 success: false,
                 message:
-                    data.message ||
                     "Erreur lors de l'analyse du fichier"
             };
         }
-
-        return {
-            success: true,
-            rayons: data.rayons || [],
-            familles: data.familles || []
-        };
     },
+
 
     // ==========================================
     // ETAPE 3 → IMPORTER LE STOCK
@@ -102,84 +174,124 @@ export const useProductStore = create((set) => ({
     ) => {
 
         if (!file) {
+
             return {
                 success: false,
                 message: "Aucun fichier envoyé"
             };
+
         }
 
-        const formData = new FormData();
+        try {
 
-        formData.append(
-            "file",
-            file
-        );
+            const formData =
+                new FormData();
 
-        formData.append(
-            "rayons",
-            JSON.stringify(rayons)
-        );
+            formData.append(
+                "file",
+                file
+            );
 
-        formData.append(
-            "familles",
-            JSON.stringify(familles)
-        );
+            formData.append(
+                "rayons",
+                JSON.stringify(rayons)
+            );
 
+            formData.append(
+                "familles",
+                JSON.stringify(familles)
+            );
 
-        const res = await fetch(
-            "/api/products/import",
-            {
-                method: "POST",
-                body: formData
+            const res = await fetch(
+                "/api/products/import/",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data =
+                await res.json();
+
+            if (!res.ok) {
+
+                return {
+                    success: false,
+                    message:
+                        data.message ||
+                        data.detail ||
+                        "Erreur lors de l'import"
+                };
+
             }
-        );
 
+            // ==========================================
+            // ACTUALISER LES PRODUITS
+            // ==========================================
 
-        const data = await res.json();
+            const productsRes =
+                await fetch(
+                    "/api/products"
+                );
 
+            const productsData =
+                await productsRes.json();
 
-        if (!res.ok) {
+            if (productsRes.ok) {
+
+                let products = [];
+
+                if (Array.isArray(productsData)) {
+
+                    products =
+                        productsData;
+
+                } else if (
+                    Array.isArray(
+                        productsData.results
+                    )
+                ) {
+
+                    products =
+                        productsData.results;
+
+                } else if (
+                    Array.isArray(
+                        productsData.data
+                    )
+                ) {
+
+                    products =
+                        productsData.data;
+
+                }
+
+                set({
+                    products
+                });
+            }
+
+            return {
+                success: true,
+                message:
+                    data.message ||
+                    "Import réussi",
+                data
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Erreur import produits :",
+                error
+            );
 
             return {
                 success: false,
                 message:
-                    data.message ||
                     "Erreur lors de l'import"
             };
-
         }
-
-
-        // Actualisation des produits
-        const productsRes =
-            await fetch("/api/products");
-
-
-        const productsData =
-            await productsRes.json();
-
-
-        if (productsRes.ok) {
-
-            set({
-                products:
-                    productsData.data
-            });
-
-        }
-
-
-        return {
-
-            success: true,
-
-            message:
-                data.message,
-
-            data
-
-        };
-
     },
 
 
@@ -192,27 +304,50 @@ export const useProductStore = create((set) => ({
         try {
 
             const res =
-                await fetch("/api/products");
+                await fetch(
+                    "/api/products"
+                );
 
             const data =
                 await res.json();
-
 
             if (!res.ok) {
 
                 throw new Error(
                     data.message ||
+                    data.detail ||
                     "Erreur lors de la récupération des produits"
                 );
 
             }
 
+            let products = [];
+
+            // DRF retourne directement une liste
+            if (Array.isArray(data)) {
+
+                products = data;
+
+            // DRF avec pagination
+            } else if (
+                Array.isArray(data.results)
+            ) {
+
+                products =
+                    data.results;
+
+            // Compatibilité ancienne API
+            } else if (
+                Array.isArray(data.data)
+            ) {
+
+                products =
+                    data.data;
+            }
 
             set({
-                products:
-                    data.data
+                products
             });
-
 
         } catch (error) {
 
@@ -221,8 +356,10 @@ export const useProductStore = create((set) => ({
                 error
             );
 
+            set({
+                products: []
+            });
         }
-
     }
 
 }));

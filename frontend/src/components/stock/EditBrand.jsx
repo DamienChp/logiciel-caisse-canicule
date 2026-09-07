@@ -44,7 +44,7 @@ const EditBrand = ({open, onClose, brandToEdit}) => {
     const handleSubmit = async()=>{
 
         const result = await updateBrand(
-            brandToEdit._id, 
+            brandToEdit.id, 
             {
                 name: brand.name,
                 image: brand.image
