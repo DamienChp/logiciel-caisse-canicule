@@ -164,9 +164,7 @@ export const useCustomerStore = create((set) => ({
 
             set((state) => ({
                 customers: state.customers.filter(
-                    (customer) =>
-                        customer._id !== id &&
-                        customer.id !== id
+                    (customer) => customer.id !== id
                 )
             }));
 
@@ -186,9 +184,7 @@ export const useCustomerStore = create((set) => ({
 
     updateCustomer: async (updatedCustomer) => {
         try {
-            const id =
-                updatedCustomer._id ??
-                updatedCustomer.id;
+            const id = updatedCustomer.id;
 
             const response = await fetch(
                 `/api/customers/${id}`,
@@ -215,9 +211,7 @@ export const useCustomerStore = create((set) => ({
             set((state) => ({
                 customers: state.customers.map(
                     (current) => {
-                        const currentId =
-                            current._id ??
-                            current.id;
+                        const currentId = current.id;
 
                         return currentId === id
                             ? customer

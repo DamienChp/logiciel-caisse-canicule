@@ -62,14 +62,14 @@ const ProductSelector = ({ products, onSelect }) => {
                     <List>
                         {filteredProducts.map((product) => (
                             <ListItemButton
-                                key={product._id}
+                                key={product.id}
                                 onClick={() =>
                                     handleSelect(product)
                                 }
                             >
                                 <ListItemText
                                     primary={product.name}
-                                    secondary={`${product.priceTTC} €`}
+                                    secondary={`${product.price_ttc} €`}
                                 />
                             </ListItemButton>
                         ))}

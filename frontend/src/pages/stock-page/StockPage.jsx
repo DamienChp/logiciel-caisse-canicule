@@ -21,7 +21,7 @@ const StockPage = ()=>{
     brands,
     getAllBrands()
 
-  },[brands, getAllBrands])
+  },[getAllBrands])
 
   return (
 
@@ -40,7 +40,7 @@ const StockPage = ()=>{
           brands.map((brand)=>(
 
               <BrandCard 
-                key={brand._id}
+                key={brand.id}
                 brand={brand}
               />
 

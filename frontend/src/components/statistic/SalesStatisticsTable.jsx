@@ -34,7 +34,7 @@ const resolveName = (id, list, fallbackLabel) => {
 
     if (!list || list.length === 0) return id;
 
-    const found = list.find((entry) => entry._id === id);
+    const found = list.find((entry) => entry.id === id);
 
     return found ? (found.name || found.label || id) : id;
 
@@ -184,7 +184,7 @@ const SalesStatisticsTable = ({
                 const product = item.product || item;
 
                 const quantity = Number(item.quantity || 0);
-                const unitPriceTTC = Number(item.priceTTC || product.priceTTC || 0);
+                const unitPriceTTC = Number(item.price_ttc || product.price_ttc || 0);
                 const unitCost = Number(item.purchasePrice || product.purchasePrice || 0);
 
                 const revenue = quantity * unitPriceTTC;
@@ -241,7 +241,7 @@ const SalesStatisticsTable = ({
 
                 // ---- Détail par article, à l'intérieur du groupe ----
 
-                const articleKey = product._id || product.articleCode || product.name;
+                const articleKey = product.id || product.articleCode || product.name;
 
                 if (!stats[key].articles[articleKey]) {
 

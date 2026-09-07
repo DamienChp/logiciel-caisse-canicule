@@ -34,7 +34,7 @@ export const useSaleStore = create((set) => ({
 
             return {
                 success: true,
-                sale: data.sale
+                sale: data
             };
 
         } catch (error) {
@@ -77,13 +77,13 @@ export const useSaleStore = create((set) => ({
             }
 
             set({
-                sales: data.data,
+                sales: data,
                 loading: false
             });
 
             return {
                 success: true,
-                sales: data.data
+                sales: data
             };
 
         } catch (error) {
@@ -116,7 +116,7 @@ export const useSaleStore = create((set) => ({
 
         try {
 
-            const response = await fetch(`/api/sales/${saleId}/send-receipt`,
+            const response = await fetch(`/api/sales/${saleId}/receipt/email`,
                 {
                     method: "POST"
                 }

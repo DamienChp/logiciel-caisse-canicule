@@ -196,9 +196,7 @@ export const useBrandStore = create((set) => ({
                 brands: state.brands.map(
                     (currentBrand) => {
 
-                        const currentId =
-                            currentBrand._id ??
-                            currentBrand.id;
+                        const currentId = currentBrand.id;
 
                         return currentId === id
                             ? brand
@@ -273,9 +271,7 @@ export const useBrandStore = create((set) => ({
                 brands: state.brands.filter(
                     (brand) => {
 
-                        const brandId =
-                            brand._id ??
-                            brand.id;
+                        const brandId = brand.id;
 
                         return brandId !== id;
                     }

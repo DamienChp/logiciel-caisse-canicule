@@ -103,7 +103,7 @@ const ClientSelector = ({ client, setClient }) => {
 
                         <Avatar
                             sx={{
-                                bgcolor: getAvatarColor(client._id),
+                                bgcolor: getAvatarColor(client.id),
                                 width: 36,
                                 height: 36,
                                 fontSize: "0.85rem",
@@ -268,13 +268,14 @@ const ClientSelector = ({ client, setClient }) => {
                         {
                             filteredCustomers.map((customer, index)=>(
 
-                                <React.Fragment key={customer._id}>
+                                <React.Fragment key={customer.id}>
 
                                     <ListItem disablePadding>
 
                                         <ListItemButton
 
                                             onClick={()=>{
+                                                console.log('setting cc')
                                                 setClient(customer);
                                                 setOpen(false);
                                             }}
@@ -293,7 +294,7 @@ const ClientSelector = ({ client, setClient }) => {
                                             <ListItemAvatar>
                                                 <Avatar
                                                     sx={{
-                                                        bgcolor: getAvatarColor(customer._id),
+                                                        bgcolor: getAvatarColor(customer.id),
                                                         width: 38,
                                                         height: 38,
                                                         fontSize: "0.85rem",

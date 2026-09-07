@@ -23,7 +23,8 @@ const PaymentButtons = () => {
         const activeCart = state.carts.find(
             (cart) => cart.id === state.activeCartId
         );
-
+        
+        console.log(state.carts)
         return activeCart?.cart ?? [];
     });
 
@@ -96,7 +97,7 @@ const PaymentButtons = () => {
         setSelectedPayment(paymentMethod);
 
         // AVEC CLIENT
-        if (client) {
+        if (cart.client) {
             setReceiptDialogOpen(true);
             return;
         }
@@ -120,17 +121,16 @@ const PaymentButtons = () => {
         const saleData = {
 
             // Client éventuellement null
-            customer: client?._id || null,
+            customer: client?.id || null,
 
             // Produits du panier
             products: cart.map((product) => ({
-                product: product._id,
+                product: product.id,
                 size: product.size || null,
                 quantity: product.quantity,
-                priceTTC: product.priceTTC,
+                price_ttc: product.price_ttc,
                 discount: product.discount || 0
             })),
-
             // Remise globale
             cartDiscount: cartDiscount || 0,
 
@@ -138,7 +138,7 @@ const PaymentButtons = () => {
             total: getTotal(),
 
             // Moyen de paiement
-            paymentMethod,
+            payment_method: paymentMethod,
 
             // Moyen d'envoi du reçu
             receiptMethod
@@ -154,7 +154,7 @@ const PaymentButtons = () => {
         }
 
         // ID DE LA VENTE
-        const saleId = result.sale._id;
+        const saleId = result.sale.id;
 
         // ======================================
         // EMAIL

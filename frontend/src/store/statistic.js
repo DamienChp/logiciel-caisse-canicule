@@ -31,8 +31,8 @@ export const filterSalesByPeriod = (sales, period) => {
 
     return sales.filter((sale) => {
 
-        const saleDate = new Date(sale.createdAt);
-
+        const saleDate = new Date(sale.created_at);
+        console.log('SALEDATE', saleDate)
         // ==========================================
         // AUJOURD'HUI
         // ==========================================
@@ -106,7 +106,6 @@ export const useSalesStatistics = (sales, period) => {
     // ==================================================
     // VENTES FILTRÉES SELON LA PÉRIODE
     // ==================================================
-
     const filteredSales = useMemo(() => {
 
         return filterSalesByPeriod(sales, period);
@@ -184,19 +183,19 @@ export const useSalesStatistics = (sales, period) => {
 
             const amount = Number(sale.total || 0);
 
-            if (sale.paymentMethod === "cash") {
+            if (sale.payment_method === "cash") {
                 stats.cash++;
                 stats.cashRevenue += amount;
             }
 
-            if (sale.paymentMethod === "card") {
+            if (sale.payment_method === "card") {
                 stats.card++;
                 stats.cardRevenue += amount;
             }
 
             if (
-                sale.paymentMethod === "cheque" ||
-                sale.paymentMethod === "check"
+                sale.payment_method === "cheque" ||
+                sale.payment_method === "check"
             ) {
                 stats.cheque++;
                 stats.chequeRevenue += amount;

@@ -15,6 +15,7 @@ import { useCartStore } from "../../store/cart.js";
 
 const SaleProductsTable = ({ products }) => {
 
+    console.log(products)
     const {
         removeProduct,
         setProductDiscount
@@ -122,7 +123,7 @@ const SaleProductsTable = ({ products }) => {
 
     const rows = products.map((product) => {
 
-        const subtotal = product.priceTTC * product.quantity;
+        const subtotal = product.price_ttc * product.quantity;
 
         const discount =
             subtotal *
@@ -132,10 +133,10 @@ const SaleProductsTable = ({ products }) => {
         const total = subtotal - discount;
 
         return {
-            id: product._id,
+            id: product.id,
             name: product.name,
             size: product.size || "-",
-            price: product.priceTTC,
+            price: product.price_ttc,
             quantity: product.quantity,
             discount: product.discount || 0,
             total

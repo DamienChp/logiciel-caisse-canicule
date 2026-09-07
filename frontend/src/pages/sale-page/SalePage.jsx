@@ -61,7 +61,8 @@ const SalePage = () => {
     const cart = activeCart?.cart || [];
     const cartDiscount = activeCart?.cartDiscount || 0;
 
-
+    console.log(client);
+    console.log(cart);
     // ======================================================
     // PRODUITS
     // ======================================================

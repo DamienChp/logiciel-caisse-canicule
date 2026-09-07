@@ -103,11 +103,11 @@ const SalesTable = ({ sales, searchText = "" }) => {
 
             return {
 
-                id: sale._id,
+                id: sale.id,
 
                 sale,
 
-                date: new Date(sale.createdAt).toLocaleString("fr-FR", {
+                date: new Date(sale.created_at).toLocaleString("fr-FR", {
                     dateStyle: "short",
                     timeStyle: "short"
                 }),
@@ -117,8 +117,8 @@ const SalesTable = ({ sales, searchText = "" }) => {
                 productsCount,
 
                 paymentMethod:
-                    paymentMethodLabel[sale.paymentMethod] ||
-                    sale.paymentMethod,
+                    paymentMethodLabel[sale.payment_method] ||
+                    sale.payment_method,
 
                 total: formatEuro(Number(sale.total || 0))
 

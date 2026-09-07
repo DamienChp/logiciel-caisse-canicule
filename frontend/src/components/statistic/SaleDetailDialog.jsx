@@ -88,7 +88,7 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
 
                         <Typography variant="body2">
 
-                            {new Date(sale.createdAt).toLocaleString("fr-FR", {
+                            {new Date(sale.created_at).toLocaleString("fr-FR", {
                                 dateStyle: "long",
                                 timeStyle: "short"
                             })}
@@ -103,8 +103,8 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
 
                         <Chip
                             label={
-                                paymentMethodLabel[sale.paymentMethod] ||
-                                sale.paymentMethod
+                                paymentMethodLabel[sale.payment_method] ||
+                                sale.payment_method
                             }
                             size="small"
                         />

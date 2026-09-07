@@ -24,8 +24,8 @@ export const useProductStore = create((set) => ({
 
         if (
             !newProduct.name ||
-            newProduct.priceHT === undefined ||
-            newProduct.priceTTC === undefined
+            newProduct.price_ht === undefined ||
+            newProduct.price_ttc === undefined
         ) {
             return {
                 success: false,

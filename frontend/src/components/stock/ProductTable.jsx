@@ -19,7 +19,7 @@ const ProductTable = ({ searchText, brand }) => {
     
     const brandProducts = products.filter(
         (product) =>
-            product.brand?._id === brand
+            product.brand?.id === brand
     );
 
     const columns = [
@@ -95,15 +95,15 @@ const ProductTable = ({ searchText, brand }) => {
 
     const rows = brandProducts.map(
         (product) => ({
-            id: product._id,
+            id: product.id,
             name: product.name,
             articleCode: product.articleCode,
             barcode: product.barcode,
             color: product.color,
             size: product.size,
             stock: product.stock,
-            priceHT: product.priceHT,
-            priceTTC: product.priceTTC,
+            priceHT: product.price_ht,
+            priceTTC: product.price_ttc,
             purchasePrice: product.purchasePrice
         })
     );
