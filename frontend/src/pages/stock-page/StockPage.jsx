@@ -10,18 +10,19 @@ import { useBrandStore } from "../../store/brand"
 
 import BrandCard from "../../components/stock/BrandCard"
 import ImportStock from "../../components/stock/import-stock/ImportStock"
+import FindProduct from "../../components/stock/FindProduct"
 
 const StockPage = ()=>{  
   
   const { brands, getAllBrands } = useBrandStore()
 
-  const [open, setOpen] = useState(false)
+  const [openImport, setOpenImport] = useState(false)
+  const [openFindProduct, setOpenFindProduct] = useState(false)
   
   useEffect(()=>{
-    brands,
     getAllBrands()
 
-  },[brands, getAllBrands])
+  },[getAllBrands])
 
   return (
 
@@ -30,9 +31,17 @@ const StockPage = ()=>{
       <Button
         variant="contained"
         sx={{ marginBottom: 5}}
-        onClick={() => setOpen(true)}
+        onClick={() => setOpenImport(true)}
       >
         Importer le stock
+      </Button>
+      
+      <Button
+        variant="contained"
+        sx={{ mb: 5, ml: 5}}
+        onClick={() => setOpenFindProduct(true)}
+      >
+        Rechercher un produit
       </Button>
 
       <Grid container spacing={3}>
@@ -49,9 +58,14 @@ const StockPage = ()=>{
       </Grid>
 
       <ImportStock
-        open={open} 
-        onClose={()=>setOpen(false)} 
+        open={openImport} 
+        onClose={()=>setOpenImport(false)} 
         onImportSuccess={getAllBrands}
+      />
+
+      <FindProduct
+        open={openFindProduct} 
+        onClose={()=>setOpenFindProduct(false)} 
       />
     </Box>
   )

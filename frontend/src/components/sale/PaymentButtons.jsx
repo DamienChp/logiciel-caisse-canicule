@@ -131,6 +131,8 @@ const PaymentButtons = () => {
             receiptMethod
         };
 
+        console.log("saleData", saleData);
+
 
         // CRÉATION DE LA VENTE
         const result = await createSale(saleData);

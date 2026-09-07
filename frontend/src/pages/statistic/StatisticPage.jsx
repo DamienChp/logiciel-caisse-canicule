@@ -39,7 +39,6 @@ const StatisticPage = () => {
 
     const [period, setPeriod] = useState("today");
 
-
     useEffect(() => {
 
         getAllSales();
