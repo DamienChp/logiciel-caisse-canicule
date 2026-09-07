@@ -80,7 +80,7 @@ const Navbar = () => {
 
                 <img
                     src="/Logo_Principal.svg"
-                    alt="Canicule"
+                    alt="Meda_solution"
                     style={{
                         // marginTop: "12px",
                         // marginBottom: "12px",
