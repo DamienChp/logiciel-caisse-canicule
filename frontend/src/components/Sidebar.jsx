@@ -7,6 +7,8 @@ import {
     ListItemText
 } from '@mui/material'
 
+import { alpha } from '@mui/material/styles'
+
 import { 
     PointOfSale, 
     Inventory, 
@@ -19,141 +21,75 @@ import { NavLink } from 'react-router-dom'
 
 import React from 'react'
 
+
+// ======================================================
+// LIENS DE NAVIGATION
+// ======================================================
+
+const navItems = [
+    { label: "Vente", to: "/", icon: <LocalGroceryStore /> },
+    { label: "Caisse", to: "/cash-register", icon: <PointOfSale /> },
+    { label: "Stock", to: "/stock", icon: <Inventory /> },
+    { label: "Client", to: "/customers", icon: <Group /> },
+    { label: "Statistiques", to: "/statistic", icon: <BarChart /> }
+];
+
+
 const Sidebar = () => {
-  return (
-    <Box
-        bgcolor="#E7FBF7"
-        flex={2}
-        p={2}
-        sx={{
-            height: '100vh',
-            display: {xs:'none' , sm:'block'}
-        }}
-    >
-        <List>
-            
-            {/* VENTE */}
+    return (
+        <Box
+            bgcolor="background.paper"
+            flex={2}
+            p={2}
+            sx={{
+                height: '100vh',
+                display: { xs: 'none', sm: 'block' },
+                borderRight: '1px solid',
+                borderColor: 'divider'
+            }}
+        >
+            <List>
 
-            <ListItem disablePadding>
-                <ListItemButton 
-                    component={NavLink} 
-                    to="/"
-                    sx={{
-                        '&.active': {
-                            backgroundColor: '#F7ECCB',
-                        },
-                    }}
-                >
-                    <ListItemIcon sx={{ color: "#02595A"}}>
-                        <LocalGroceryStore />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary="Vente"
-                        primaryTypographyProps={{
-                            color: "#02595A",
-                        }}
-                    />                
-                </ListItemButton>
-            </ListItem>
+                {navItems.map((item) => (
 
-            {/* CAUISSE */}
+                    <ListItem key={item.to} disablePadding>
+                        <ListItemButton
+                            component={NavLink}
+                            to={item.to}
+                            sx={{
+                                borderRadius: 2,
+                                mb: 0.5,
+                                color: 'text.primary',
 
-            <ListItem disablePadding>
-                <ListItemButton 
-                    component={NavLink} 
-                    to="/cash-register"
-                    sx={{
-                        '&.active': {
-                            backgroundColor: '#F7ECCB',
-                        },
-                    }}
-                >
-                    <ListItemIcon sx={{ color: "#02595A"}}>
-                        <PointOfSale />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary="Caisse"
-                        primaryTypographyProps={{
-                            color: "#02595A",
-                        }}
-                    />                
-                </ListItemButton>
-            </ListItem>
+                                '&.active': {
+                                    bgcolor: (theme) =>
+                                        alpha(theme.palette.primary.main, 0.12),
+                                    color: 'primary.main',
 
-            {/* STOCK */}
+                                    '& .MuiListItemIcon-root': {
+                                        color: 'primary.main'
+                                    }
+                                },
 
-            <ListItem disablePadding>
-                <ListItemButton 
-                    component={NavLink} 
-                    to="/stock"
-                    sx={{
-                        '&.active': {
-                            backgroundColor: '#F7ECCB',
-                        },
-                    }}
-                >                    
-                    <ListItemIcon sx={{ color: "#02595A"}}>
-                        <Inventory />
-                    </ListItemIcon>
-                    <ListItemText 
-                        primary="Stock" 
-                        primaryTypographyProps={{
-                            color: "#02595A",
-                        }}
-                    />
-                </ListItemButton>
-          </ListItem>
+                                '&:hover': {
+                                    bgcolor: (theme) =>
+                                        alpha(theme.palette.primary.main, 0.08)
+                                }
+                            }}
+                        >
+                            <ListItemIcon sx={{ color: 'text.secondary' }}>
+                                {item.icon}
+                            </ListItemIcon>
 
-        {/* Client */}
+                            <ListItemText primary={item.label} />
+                        </ListItemButton>
+                    </ListItem>
 
-          <ListItem disablePadding>
-                <ListItemButton 
-                    component={NavLink} 
-                    to="/customers"
-                    sx={{
-                        '&.active': {
-                            backgroundColor: '#F7ECCB',
-                        },
-                    }}
-                >                    
-                    <ListItemIcon sx={{ color: "#02595A"}}>
-                        <Group />
-                    </ListItemIcon>
-                    <ListItemText 
-                        primary="Client" 
-                        primaryTypographyProps={{
-                            color: "#02595A",
-                        }}
-                    />
-                </ListItemButton>
-          </ListItem>
+                ))}
 
-        {/* Tableau de bord */}
-
-          <ListItem disablePadding>
-                <ListItemButton 
-                    component={NavLink} 
-                    to="/statistic"
-                    sx={{
-                        '&.active': {
-                            backgroundColor: '#F7ECCB',
-                        },
-                    }}
-                >                    
-                    <ListItemIcon sx={{ color: "#02595A"}}>
-                        <BarChart />
-                    </ListItemIcon>
-                    <ListItemText 
-                        primary="Statistiques"
-                        primaryTypographyProps={{
-                            color: "#02595A",
-                        }}
-                    />
-                </ListItemButton>
-          </ListItem>
-        </List>
-    </Box>
-  )
+            </List>
+        </Box>
+    )
 }
 
 export default Sidebar

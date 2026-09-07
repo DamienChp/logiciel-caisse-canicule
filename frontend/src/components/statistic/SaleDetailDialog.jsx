@@ -53,7 +53,7 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
             `${customer.first_name || ""} ${customer.last_name || ""}`.trim())
         : null;
 
-
+    
     return (
 
         <Dialog
@@ -161,11 +161,11 @@ const SaleDetailDialog = ({ open, sale, onClose }) => {
 
                             const name =
                                 item.name ||
-                                item.product?.name ||
+                                item.product?.articleCode ||
                                 "Produit";
 
                             const unitPrice = Number(
-                                item.price ?? item.product?.price ?? 0
+                                item.priceTTC ?? item.product?.priceTTC ?? 0
                             );
 
                             const quantity = Number(item.quantity || 0);

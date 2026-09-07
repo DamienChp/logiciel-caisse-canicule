@@ -19,31 +19,17 @@ import { useSaleStore } from "../../store/sale";
 
 const PaymentButtons = () => {
 
-    const cart = useCartStore((state) => {
-        const activeCart = state.carts.find(
-            (cart) => cart.id === state.activeCartId
-        );
-        
-        console.log(state.carts)
-        return activeCart?.cart ?? [];
-    });
+    const {
+        getActiveCart,
+        getTotal,
+        clearCart
+    } = useCartStore();
 
-    const client = useCartStore(
-        (state) => state.client
-    );
+    const activeCart = getActiveCart();
 
-    const cartDiscount = useCartStore(
-        (state) => state.cartDiscount
-    );
-
-    const getTotal = useCartStore(
-        (state) => state.getTotal
-    );
-
-    const clearCart = useCartStore(
-        (state) => state.clearCart
-    );
-
+    const cart = activeCart?.cart || [];
+    const client = activeCart?.client || null;
+    const cartDiscount = activeCart?.cartDiscount || 0;
 
     const createSale = useSaleStore(
         (state) => state.createSale
@@ -143,6 +129,8 @@ const PaymentButtons = () => {
             // Moyen d'envoi du reçu
             receiptMethod
         };
+
+        console.log("saleData", saleData);
 
 
         // CRÉATION DE LA VENTE
@@ -297,20 +285,13 @@ const PaymentButtons = () => {
 
                 <Button
                     variant="contained"
-
                     disabled={
                         loading ||
                         sendingReceipt ||
                         cart.length === 0
                     }
-
-                    onClick={() =>
-                        handlePayment("card")
-                    }
-
-                    sx={{
-                        flex: 1
-                    }}
+                    onClick={() => handlePayment("card")}
+                    sx={{flex: 1}}
                 >
                     CB
                 </Button>
@@ -322,20 +303,13 @@ const PaymentButtons = () => {
 
                 <Button
                     variant="contained"
-
                     disabled={
                         loading ||
                         sendingReceipt ||
                         cart.length === 0
                     }
-
-                    onClick={() =>
-                        handlePayment("cash")
-                    }
-
-                    sx={{
-                        flex: 1
-                    }}
+                    onClick={() => handlePayment("cash")}
+                    sx={{flex: 1}}
                 >
                     Cash
                 </Button>
@@ -347,20 +321,13 @@ const PaymentButtons = () => {
 
                 <Button
                     variant="contained"
-
                     disabled={
                         loading ||
                         sendingReceipt ||
                         cart.length === 0
                     }
-
-                    onClick={() =>
-                        handlePayment("cheque")
-                    }
-
-                    sx={{
-                        flex: 1
-                    }}
+                    onClick={() => handlePayment("cheque")}
+                    sx={{flex: 1}}
                 >
                     Chèque
                 </Button>
@@ -374,20 +341,12 @@ const PaymentButtons = () => {
 
             <Dialog
                 open={receiptDialogOpen}
-
                 onClose={() => {
-
                     if (!sendingReceipt) {
-
-                        setReceiptDialogOpen(
-                            false
-                        );
+                        setReceiptDialogOpen(false);
                     }
-
                 }}
-
                 fullWidth
-
                 maxWidth="xs"
             >
 
@@ -452,13 +411,7 @@ const PaymentButtons = () => {
                     <Button
                         fullWidth
                         variant="contained"
-
-                        onClick={() =>
-                            handleReceipt(
-                                "email"
-                            )
-                        }
-
+                        onClick={() =>handleReceipt("email")}
                         disabled={
                             loading ||
                             sendingReceipt
@@ -475,13 +428,7 @@ const PaymentButtons = () => {
                     <Button
                         fullWidth
                         variant="contained"
-
-                        onClick={() =>
-                            handleReceipt(
-                                "phone"
-                            )
-                        }
-
+                        onClick={() => handleReceipt("phone")}
                         disabled={
                             loading ||
                             sendingReceipt
@@ -498,11 +445,7 @@ const PaymentButtons = () => {
                     <Button
                         fullWidth
                         variant="outlined"
-
-                        onClick={() =>
-                            handleReceipt(null)
-                        }
-
+                        onClick={() => handleReceipt(null)}
                         disabled={
                             loading ||
                             sendingReceipt
@@ -522,13 +465,8 @@ const PaymentButtons = () => {
 
             <Snackbar
                 open={successOpen}
-
                 autoHideDuration={3000}
-
-                onClose={() =>
-                    setSuccessOpen(false)
-                }
-
+                onClose={() => setSuccessOpen(false)}
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "center"
@@ -536,17 +474,10 @@ const PaymentButtons = () => {
             >
 
                 <Alert
-                    onClose={() =>
-                        setSuccessOpen(false)
-                    }
-
+                    onClose={() => setSuccessOpen(false)}
                     severity="success"
-
                     variant="filled"
-
-                    sx={{
-                        width: "100%"
-                    }}
+                    sx={{ width: "100%" }}
                 >
                     {successMessage}
                 </Alert>

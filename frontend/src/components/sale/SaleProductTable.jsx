@@ -2,7 +2,9 @@ import React from "react";
 
 import {
     IconButton,
-    TextField
+    TextField,
+    Checkbox,
+    Box
 } from "@mui/material";
 
 import {
@@ -18,7 +20,9 @@ const SaleProductsTable = ({ products }) => {
     console.log(products)
     const {
         removeProduct,
-        setProductDiscount
+        setProductQuantity,
+        setProductDiscount,
+        toggleGift
     } = useCartStore();
 
     const handleDelete = (id) => {
@@ -26,6 +30,23 @@ const SaleProductsTable = ({ products }) => {
     };
 
     const columns = [
+        {
+            field: "gift",
+            headerName: "Offert",
+            width: 80,
+            sortable: false,
+            renderCell: (params) => (
+                <Checkbox
+                    checked={params.row.discount === 100}
+                    onChange={() =>
+                        toggleGift(
+                            params.row.id,
+                            params.row.size
+                        )
+                    }
+                />
+            ),
+        },
 
         {
             field: "name",
@@ -40,18 +61,35 @@ const SaleProductsTable = ({ products }) => {
         },
 
         {
-            field: "price",
-            headerName: "Prix",
-            width: 100,
-
-            valueFormatter: (value) =>
-                `${value} €`
-        },
-
-        {
             field: "quantity",
             headerName: "Qté",
-            width: 80
+            width: 80,
+
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center"
+                    }}
+                >
+                    <TextField
+                        type="number"
+                        size="small"
+                        value={params.row.quantity}
+                        inputProps={{ min: 1 }}
+                        onChange={(e) => {
+                            setProductQuantity(
+                                params.row.id,
+                                params.row.size,
+                                e.target.value
+                            );
+                        }}
+                        sx={{ width: 70 }}
+                    />
+                </Box>
+            ),
         },
 
         {
@@ -60,37 +98,47 @@ const SaleProductsTable = ({ products }) => {
             width: 110,
 
             renderCell: (params) => (
-                <TextField
-                    type="number"
-                    size="small"
-                    value={params.row.discount}
-                    onChange={(e) => {
-
-                        const value = Math.min(
-                            100,
-                            Math.max(
-                                0,
-                                Number(e.target.value)
-                            )
-                        );
-
-                        setProductDiscount(
-                            params.row.id,
-                            value
-                        );
-                    }}
-                    inputProps={{
-                        min: 0,
-                        max: 100
-                    }}
+                <Box
                     sx={{
-                        width: 80,
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center"
                     }}
-                    InputProps={{
-                        endAdornment: "%"
-                    }}
-                />
-            )
+                >
+                    <TextField
+                        type="number"
+                        size="small"
+                        value={params.row.discount}
+                        onChange={(e) => {
+
+                            const value = Math.min(
+                                100,
+                                Math.max(
+                                    0,
+                                    Number(e.target.value)
+                                )
+                            );
+
+                            setProductDiscount(
+                                params.row.id,
+                                params.row.size,
+                                value
+                            );
+                        }}
+                        inputProps={{
+                            min: 0,
+                            max: 100
+                        }}
+                        sx={{
+                            width: 80
+                        }}
+                        InputProps={{
+                            endAdornment: "%"
+                        }}
+                    />
+                </Box>
+            ),
         },
 
         {

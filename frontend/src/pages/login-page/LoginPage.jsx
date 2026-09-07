@@ -80,24 +80,24 @@ const LoginPage = () => {
                 justifyContent: "center",
 
                 background:
-                    "linear-gradient(180deg, #FBF8F0 0%, #FBF8F0 55%, #F3E3B8 75%, #E8B96B 100%)"
+                    "linear-gradient(160deg, #063B5C 0%, #087EA4 55%, #00A6A6 100%)"
             }}
         >
 
             {/* ==================================================== */}
-            {/* HALO SOLEIL DÉCORATIF */}
+            {/* FORME DÉCORATIVE — cercle diffus */}
             {/* ==================================================== */}
 
             <Box
                 sx={{
                     position: "absolute",
-                    top: { xs: -120, md: -80 },
-                    right: { xs: -100, md: -40 },
-                    width: 380,
-                    height: 380,
+                    top: { xs: -140, md: -100 },
+                    right: { xs: -120, md: -60 },
+                    width: 420,
+                    height: 420,
                     borderRadius: "50%",
                     background:
-                        "radial-gradient(circle, rgba(217,164,65,0.35) 0%, rgba(217,164,65,0) 70%)",
+                        "radial-gradient(circle, rgba(0,166,166,0.35) 0%, rgba(0,166,166,0) 70%)",
                     pointerEvents: "none"
                 }}
             />
@@ -105,49 +105,33 @@ const LoginPage = () => {
             <Box
                 sx={{
                     position: "absolute",
-                    top: { xs: -60, md: -20 },
-                    left: { xs: -80, md: 60 },
-                    width: 260,
-                    height: 260,
+                    bottom: { xs: -160, md: -120 },
+                    left: { xs: -100, md: -40 },
+                    width: 340,
+                    height: 340,
                     borderRadius: "50%",
                     background:
-                        "radial-gradient(circle, rgba(79,179,169,0.25) 0%, rgba(79,179,169,0) 70%)",
+                        "radial-gradient(circle, rgba(6,59,92,0.45) 0%, rgba(6,59,92,0) 70%)",
                     pointerEvents: "none"
                 }}
             />
 
 
             {/* ==================================================== */}
-            {/* VAGUES DÉCORATIVES EN BAS D'ÉCRAN */}
+            {/* GRILLE TECH DÉCORATIVE EN FOND */}
             {/* ==================================================== */}
 
             <Box
-                component="svg"
-                viewBox="0 0 1440 220"
-                preserveAspectRatio="none"
                 sx={{
                     position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    width: "100%",
-                    height: { xs: 140, md: 200 },
+                    inset: 0,
+                    opacity: 0.06,
+                    backgroundImage:
+                        "linear-gradient(#FDF7F2 1px, transparent 1px), linear-gradient(90deg, #FDF7F2 1px, transparent 1px)",
+                    backgroundSize: "48px 48px",
                     pointerEvents: "none"
                 }}
-            >
-
-                <path
-                    d="M0,120 C240,180 480,60 720,90 C960,120 1200,180 1440,110 L1440,220 L0,220 Z"
-                    fill="#4FB3A9"
-                    opacity="0.18"
-                />
-
-                <path
-                    d="M0,150 C240,90 480,190 720,150 C960,110 1200,60 1440,140 L1440,220 L0,220 Z"
-                    fill="#D9A441"
-                    opacity="0.25"
-                />
-
-            </Box>
+            />
 
 
             {/* ==================================================== */}
@@ -165,37 +149,41 @@ const LoginPage = () => {
                     width: "100%",
                     maxWidth: 420,
                     mx: 2,
-                    borderRadius: 5,
+                    borderRadius: 4,
                     border: "1px solid",
-                    borderColor: "divider",
-                    boxShadow: "0 24px 60px -20px rgba(43, 33, 20, 0.25)",
-                    bgcolor: "rgba(255, 255, 255, 0.9)",
+                    borderColor: "rgba(6, 59, 92, 0.08)",
+                    boxShadow: "0 24px 60px -20px rgba(6, 59, 92, 0.45)",
+                    bgcolor: "rgba(253, 247, 242, 0.97)",
                     backdropFilter: "blur(6px)"
                 }}
             >
 
                 {/* LOGO / TITRE */}
 
-                <Typography
-                    sx={{
-                        textAlign: "center",
-                        fontFamily: "monospace",
-                        fontWeight: 700,
-                        letterSpacing: "0.35rem",
-                        fontSize: { xs: "1.9rem", sm: "2.2rem" },
-                        color: "primary.main",
-                        mb: 0.5
+                <img
+                    src="/Logo_Principal.svg"
+                    alt="Canicule"
+                    style={{
+                        // marginTop: "12px",
+                        // marginBottom: "12px",
+                        alignItems: "center",
+                        height: "85px",
+                        width: "auto",
+                        objectFit: "contain",
+                        flexGrow: 1,
+                        objectPosition: "left"
                     }}
-                >
-                    CANICULE
-                </Typography>
+                />
 
                 <Typography
                     sx={{
                         textAlign: "center",
                         color: "text.secondary",
                         mb: 4,
-                        letterSpacing: "0.05rem"
+                        letterSpacing: "0.08rem",
+                        textTransform: "uppercase",
+                        fontSize: "0.75rem",
+                        fontWeight: 600
                     }}
                 >
                     Espace boutique
@@ -275,22 +263,11 @@ const LoginPage = () => {
                     sx={{
                         py: 1.4,
                         fontSize: "1rem",
-                        boxShadow: "0 12px 24px -10px rgba(217, 164, 65, 0.6)"
+                        boxShadow: "0 12px 24px -10px rgba(8, 126, 164, 0.5)"
                     }}
                 >
                     {isLoggingIn ? "Connexion..." : "Se connecter"}
                 </Button>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        textAlign: "center",
-                        color: "text.secondary",
-                        mt: 3
-                    }}
-                >
-                    Bandol · Toulon · La Londe-les-Maures
-                </Typography>
 
             </Paper>
 
